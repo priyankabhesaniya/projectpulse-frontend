@@ -1,17 +1,72 @@
-import React from 'react';
+import React,{Suspense} from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './asset/css/component.scss'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+import Loader from './components/loader/Loader';
+import store from './store/store';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import persistStore from 'redux-persist/es/persistStore';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+// Create an Axios instance with a default base URL from the environment variable
+// axios.create({
+//     baseURL: process.env.REACT_APP_API_ENDPOINT,
+// });
+console.log(process.env.REACT_APP_API_ENDPOINT,'process.env.REACT_APP_API_ENDPOINT');
+// Optionally, you can set default headers or interceptors here
+// axiosInstance.defaults.headers.common['Authorization'] = 'Bearer token';
+
+// Example of an interceptor to handle requests or responses globally
+axios.interceptors.request.use(
+  (req) => {
+    req.baseURL = process.env.REACT_APP_API_ENDPOINT;
+    // if (authSelector?.access_token) {
+    //   req.headers = {
+    //     "Content-Type": "application/json",
+
+    //     Authorization: `Bearer ${authSelector.access_token}`,
+    //     accesscode: authSelector.accesscode,
+    //     ...req.headers,
+    //   };
+    // }
+    return req;
+  },
+  (error) => {
+    return error;
+  }
+);
+axios.interceptors.response.use(
+    response => response,
+    error => {
+        // Handle the error globally
+        return Promise.reject(error);
+    }
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// export default axiosInstance;
+let persistor = persistStore(store);
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <>
+ 
+  <Provider store={store}>
+      {/* <ToastContainer autoClose={5000} limit={1}/> */}
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+        <Suspense fallback={<Loader/>}>
+    
+        <App />
+    </Suspense>
+        </Router>
+      </PersistGate>
+    </Provider>
+  </>
+);
+
+
 reportWebVitals();
