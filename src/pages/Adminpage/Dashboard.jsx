@@ -33,7 +33,7 @@ const Dashboard = () => {
 
 
   return (
-    <div className="dashboard" style={{ padding: '20px' }}>
+    <div className="dashboard" style={{ padding: '0 20px' }}>
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>

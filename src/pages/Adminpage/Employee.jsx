@@ -16,19 +16,24 @@ import {
     Typography
 } from '@mui/material';
 import EmployeeForm from '../../components/EmployeeForm';
-import { getAllEmployee } from '../../api/Employe';
+import { deleteEmployee, getAllEmployee } from '../../api/Employe';
 import { Link } from 'react-router-dom';
+import { DeleteBtn } from '../../components/status/Badges';
+import CheckAll from '../../components/DataTable/CheckAll'
+import TableTrash from "../../asset/images/table-trash.svg"
 const Employee = ({ projects }) => {
     const [showHeader, setShowHeader] = useState(false);
     const [filter, setFilter] = useState(FILTER)
+    console.log("🚀 ~ Employee ~ filter:", filter)
     const [isLoading, setisLoading] = useState(false)
     const [selectedRows, setSelectedRows] = useState([]);
     const [isShow, setIsShow] = useState(false)
     const [open, setOpen] = useState(false);
-    const [employeeId,setEmployeeId] = useState(null)
+    const [employeeId, setEmployeeId] = useState(null)
     const [mode, setMode] = useState('Add'); // 'add' for adding a new employee
     const [initialValues, setInitialValues] = useState({});
     const [employee, setEmployee] = useState([])
+    const [totalRecords,settotalRecords] = useState(0)
     // Function to handle opening the modal for adding an employee
     const handleOpenAdd = (mode) => {
         setMode(mode);
@@ -57,7 +62,7 @@ const Employee = ({ projects }) => {
                 Cell: ({ row }) => (
                     <>
                         <div className="table-data">
-                            <Link onClick={()=>{
+                            <Link onClick={() => {
                                 setEmployeeId(row.original?.id)
                                 setMode('Edit')
                                 setOpen(true)
@@ -68,7 +73,7 @@ const Employee = ({ projects }) => {
 
                     </>
                 )
-            }, 
+            },
             {
                 Header: "Name",
                 accessor: "client_logo",
@@ -112,91 +117,66 @@ const Employee = ({ projects }) => {
                         <p>{row?.original.address}</p>{" "}
                     </div>
                 ),
-            }, {
-                Header: "",
-                accessor: "remove",
-                className: "name-field",
-                disableSortBy: true,
-                Cell: ({ row }) => (
-                    <div className="table-data">
-                        <Button variant="contained" color="secondary" style={{ margin: '5px' }}>
-                            Remove
-                        </Button>
-                    </div>
-                ),
-            },
+            }, 
+         
 
         ],
         [showHeader]
     );
     const tableHooks = (hooks) => {
         hooks.visibleColumns.push((columns) => {
-            const visibleColumns = [
-                // {
-                //   id: "id",
-                //   className: "action-w-40",
-                //   disableSortBy: true,
-                //   Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                //     <div>
-                //       <CheckAll {...getToggleAllPageRowsSelectedProps()} />
-                //     </div>
-                //   ),
-                //   Cell: ({ row }) => (
-                //     <div>
-                //       <CheckAll {...row.getToggleRowSelectedProps()} />
-                //     </div>
-                //   ),
-                // },
-                ...columns,
-                // {
-                //   Header: "",
-                //   accessor: "Actions",
-                //   className: "text-center text-nowrap action-w-40",
-                //   width: "100",
-                //   disableSortBy: true,
-                //   Cell: ({ row }) => (
-                //     <>
-                //       {
-                //         <div className="table-data">
-                //           <div className="d-flex align-items-center justify-content-center table-icon">
-                //             <Link
-                //               onClick={async() => {
-                //                 const permission = await checkPermission("delete_client");
-                //                 if (!permission) {
-                //                   dispatch(
-                //                     showUpdatedToasterMessage({
-                //                       message: Denied_Msg,
-                //                       type: "danger",
-                //                     })
-                //                   );
-                //                   return;
-                //                 }
-
-                //                 setSelected(row.original.id);
-                //                 setConfirmModal((prevState) => ({
-                //                   ...prevState,
-                //                   show: true,
-                //                   title:"Delete Client"
-                //                 }));
-                //               }}
-                //             >
-                //               <img src={TableTrash} alt="Delete" />
-                //             </Link>
-                //           </div>
-                //         </div>
-                //       }
-                //     </>
-                //   ),
-                // },
-            ];
-
-            // Conditionally remove the ID column based on the showHeader state
-            if (!showHeader) {
-                return visibleColumns.filter((column) => column.id !== "id");
-            }
-            return visibleColumns;
+          const visibleColumns = [
+            {
+              id: "id",
+              className: "action-w-40",
+              disableSortBy: true,
+              Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                <div>
+                  <CheckAll {...getToggleAllPageRowsSelectedProps()} />
+                </div>
+              ),
+              Cell: ({ row }) => (
+                <div>
+                  <CheckAll {...row.getToggleRowSelectedProps()} />
+                </div>
+              ),
+            },
+            ...columns,
+            {
+              Header: "",
+              accessor: "Actions",
+              className: "text-center text-nowrap action-w-40",
+              width: "100",
+              disableSortBy: true,
+              Cell: ({ row }) => (
+                <>
+                  {
+                    <div className="table-data">
+                      <div className="d-flex align-items-center justify-content-center table-icon">
+                        <Link
+                          onClick={() => {
+    
+                            removeEmployee(row.original.id)
+    
+                          }}
+                        >
+                          <img src={TableTrash} alt="Delete" />
+                        </Link>
+                      </div>
+                    </div>
+                  }
+                </>
+              ),
+            },
+          ];
+    
+          // Conditionally remove the ID column based on the showHeader state
+          if (!showHeader) {
+            return visibleColumns.filter((column) => column.id !== "id");
+          }
+          return visibleColumns;
         });
-    };
+      };
     const onSubmitSearch = (formData) => {
 
     }
@@ -217,21 +197,33 @@ const Employee = ({ projects }) => {
             console.log('User created successfully:', res);
             if (res?.length > 0) {
                 setEmployee(res)
+                settotalRecords(res?.length)
             }
         } catch (error) {
-            console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+            console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
+        }
+    }
+    const removeEmployee = async (id) => {
+        try {
+            const res = await deleteEmployee(id);
+            console.log('User created successfully:', res);
+
+            fetchEmployee()
+
+        } catch (error) {
+            console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
         }
     }
     useEffect(() => {
         fetchEmployee()
-    }, []);
+    }, [filter]);
     return (
         <>
             <div className="table-wrapper mt-2">
                 <div className="table-header filter-action nowrap">
                     <h5>Employee</h5>
                     <div className="table-buttons-block">
-                        <button
+                        {/* <button
                             className={`btn table-action-btn ${isShow ? "active" : ""}`}
                             id="filter-btn"
                             onClick={handleCustomSearch}
@@ -246,12 +238,12 @@ const Employee = ({ projects }) => {
                                 <path d="M3.79733 4.72642C3.89831 4.83633 3.9589 4.98622 3.9589 5.1461V9.69265C3.9589 9.96245 4.29215 10.1023 4.49411 9.91249L5.77659 8.46359C5.94826 8.26374 6.03914 8.16381 6.03914 7.95397V5.1461C6.03914 4.99621 6.09973 4.84633 6.20071 4.72642L9.87648 0.779409C10.1491 0.479636 9.93707 0 9.53313 0H0.464912C0.0609818 0 -0.151081 0.479636 0.121571 0.779409L3.79733 4.72642Z" />
                             </svg>
                             show
-                        </button>
+                        </button> */}
 
 
 
                         <button className="btn round-add-btn"
-                            onClick={() => handleOpenAdd('add')}
+                            onClick={() => handleOpenAdd('Add')}
                         >
                             <svg
                                 width="10"
@@ -318,8 +310,8 @@ const Employee = ({ projects }) => {
                     </MenuItem>
                   ))} */}
                                                 </Select>
-                                                {errors.status && (
-                                                    <p className="error-msg">{errors.status.message}</p>
+                                                {errors?.status && (
+                                                    <p className="error-msg">{errors?.status?.message}</p>
                                                 )}
                                             </FormControl>
                                         )}
@@ -349,7 +341,7 @@ const Employee = ({ projects }) => {
                     data={employee}
                     initialState={initialState}
                     setFilter={setFilter}
-                    totalRecords={10}
+                    totalRecords={totalRecords}
                     tableHooks={tableHooks}
                     setSelectedRows={setSelectedRows}
                     defaultPageLength={PAGE_LENGTH}
@@ -367,6 +359,7 @@ const Employee = ({ projects }) => {
                 mode={mode}
                 employeeId={employeeId}
                 setEmployeeId={setEmployeeId}
+                fetchEmployee={fetchEmployee}
             />
 
         </>

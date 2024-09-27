@@ -1,9 +1,9 @@
-// employee
+// projects
 import axios from 'axios'; 
 
-export const createEmployee = async (userData) => {
+export const createProject = async (projectData) => {
     try {
-        const response = await axios.post('employee', userData, {
+        const response = await axios.post('projects', projectData, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -13,9 +13,9 @@ export const createEmployee = async (userData) => {
         throw new Error(error.response?.data?.message || 'Error creating user');
     }
 };
-export const updateEmployee = async (id,userData) => {
+export const updateProject = async (id,projectData) => {
   try {
-      const response = await axios.patch('employee/'+id, userData, {
+      const response = await axios.patch('projects/'+id, projectData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -25,9 +25,9 @@ export const updateEmployee = async (id,userData) => {
       throw new Error(error.response?.data?.message || 'Error creating user');
   }
 };
-export const deleteEmployee = async (id) => {
+export const deleteProject = async (id) => {
   try {
-      const response = await axios.delete('employee/'+id, {
+      const response = await axios.delete('projects/'+id, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -37,7 +37,7 @@ export const deleteEmployee = async (id) => {
       throw new Error(error.response?.data?.message || 'Error creating user');
   }
 };
-export const getAllEmployee = async (param) => {
+export const getAllProject = async (param) => {
     const headers = {
         headers: {
           'Content-Type': 'application/json'
@@ -56,16 +56,16 @@ export const getAllEmployee = async (param) => {
             .join("&")
         : "");
     return await axios
-      .get("employee" + filter, headers)
+      .get("projects" + filter, headers)
       .then((res) => {
         return res?.data;
       })
       .catch((error) => Promise.reject(error?.response?.data));
   };
 
-  export const getOneEmployee = async (id) => {
+  export const getOneProject = async (id) => {
     try {
-        const response = await axios.get('employee/'+id, {
+        const response = await axios.get('projects/'+id, {
             headers: {
               'Content-Type': 'application/json'
             }

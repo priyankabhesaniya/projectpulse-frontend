@@ -13,10 +13,12 @@ import {
   Box,
   Typography
 } from '@mui/material';
+
 import { loginUSer } from '../../api/Login';
 import { addAuthData } from '../../store/slices/authUser/authUserSlice';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 // Yup validation schema
 const validationSchema = yup.object().shape({
@@ -42,6 +44,10 @@ const Login = () => {
 
         const res = await loginUSer(userData);
         console.log('User created successfully:', res); 
+        if(res?.error){
+          toast.error(res?.error)
+          return
+        }
         dispatch(
           addAuthData({
             loading: false,
@@ -55,7 +61,12 @@ const Login = () => {
           })
         )
     } catch (error) {
-        console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+      console.log("🚀 ~ onSubmit ~ error:", error)
+      // if (error?.response || error?.response?.data || error?.response?.data?.error) {
+      //   toast.error(error.response.data.error);
+      // } else {
+      //   toast.error('An unknown error occurred');
+      // }
     }
 };
   return (

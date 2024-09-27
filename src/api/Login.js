@@ -9,6 +9,7 @@ export const loginUSer = async (userData) => {
           }); // Use the Axios instance
         return response.data; // Return response data if needed
     } catch (error) {
-        throw new Error(error.response?.data?.message || 'Error creating user');
+      return error?.response?.data
+      throw new Error(error.response?.data?.message || 'Error creating user');
     }
 };

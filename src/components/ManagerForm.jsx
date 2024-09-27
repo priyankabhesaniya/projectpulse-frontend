@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-
 import {
   TextField,
   Button,
@@ -12,9 +11,10 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { createEmployee, getOneEmployee, updateEmployee } from '../api/Employe';
-const EmployeeForm = ({ open,mode,setOpen ,employeeId,setEmployeeId,fetchEmployee}) => {
-    console.log("🚀 ~ EmployeeForm ~ mode:", mode)
+import { createManager, getOneManager, updateManager } from '../api/Manager';
+
+const ManagerForm = ({ open,mode,setOpen ,managerId,setManagerId,fetchManager}) => {
+    console.log("🚀 ~ ManagerForm ~ mode:", mode)
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('Employee name is required').min(2, 'Employee name must be at least 2 characters'),
         email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -38,11 +38,12 @@ const EmployeeForm = ({ open,mode,setOpen ,employeeId,setEmployeeId,fetchEmploye
         phoneNumber: '',
         address: '',
         password: '',
+        role:'Manager',
         projects:[]
     },
   });
 const watching = watch()
-  console.log("🚀 ~ EmployeeForm ~ watching:", watching)
+  console.log("🚀 ~ ManagerForm ~ watching:", watching)
 
 
   const handleFormSubmit = async (data) => {
@@ -57,14 +58,13 @@ const watching = watch()
              phone:data.phoneNumber,
              address:data?.address,
              role:'Employee',
-             projects:[]
          };
  
-         const res = await createEmployee(userData);
+         const res = await createManager(userData);
          console.log('User created successfully:', res); 
          if(res?.id){
              onClose()
-             fetchEmployee()
+             fetchManager()
          }
      
      } catch (error) {
@@ -83,11 +83,11 @@ const watching = watch()
           // role:'Employee',
       };
 
-      const res = await updateEmployee(employeeId,userData);
+      const res = await updateManager(managerId,userData);
       console.log('User created successfully:', res); 
       if(res?.id){
           onClose()
-          fetchEmployee()
+          fetchManager()
       }
   
   } catch (error) {
@@ -98,11 +98,11 @@ const watching = watch()
   const onClose = ()=>{
     reset();
     setOpen(false)
-    setEmployeeId(null)
+    setManagerId(null)
   }
 const employeeData = async()=>{
     try {
-        const res = await getOneEmployee(employeeId);
+        const res = await getOneManager(managerId);
         console.log('User created successfully:', res);
        
             console.log('in this-----------------');
@@ -117,14 +117,14 @@ const employeeData = async()=>{
     }
 }
  useEffect(() => {
-    if(employeeId > 0){
+    if(managerId > 0){
         employeeData()
     }
 
- }, [employeeId]);
+ }, [managerId]);
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{mode} Employee</DialogTitle>
+      <DialogTitle>{mode} Manager</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Grid container spacing={2}>
@@ -197,4 +197,4 @@ const employeeData = async()=>{
   );
 };
 
-export default EmployeeForm;
+export default ManagerForm;

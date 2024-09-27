@@ -4,6 +4,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './asset/css/component.scss'
+import 'react-toastify/dist/ReactToastify.css';
+import './asset/css/custom.scss'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
@@ -12,6 +14,7 @@ import store from './store/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import persistStore from 'redux-persist/es/persistStore';
+import { ToastContainer } from 'react-toastify';
 
 // Create an Axios instance with a default base URL from the environment variable
 // axios.create({
@@ -61,6 +64,17 @@ root.render(
         <Suspense fallback={<Loader/>}>
     
         <App />
+        <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+/>
     </Suspense>
         </Router>
       </PersistGate>

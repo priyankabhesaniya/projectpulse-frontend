@@ -1,61 +1,155 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import {
   TextField,
   Button,
   Grid,
-  Typography,
-  Card,
-  CardContent,
-  FormControl,
-  InputLabel,
   Select,
+  Dialog,
+  FormControl,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   MenuItem,
+  InputLabel,
 } from '@mui/material';
+import { projectTypes, statusOptions } from '../pages/admin-const/constants';
+import { createProject, getOneProject, updateProject } from '../api/Project';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .required('Project name is required')
     .min(2, 'Project name must be at least 2 characters'),
-  description: Yup.string()
+  about: Yup.string()
     .required('Description is required')
     .min(10, 'Description must be at least 10 characters'),
-  startDate: Yup.date()
+  start_date: Yup.date()
     .required('Start date is required')
-    .nullable(),
-  endDate: Yup.date()
-    .required('End date is required')
-    .nullable()
-    .min(Yup.ref('startDate'), 'End date must be after start date'),
-  projectType: Yup.string().required('Project type is required'),
+  ,
+  deadline_date: Yup.date()
+    .required('End date is required'),
+  // .min(Yup.ref('startDate'), 'End date must be after start date'),
+  // projectType: Yup.string().required('Project type is required'),
   status: Yup.string().required('Status is required'),
 });
 
-const AddProjectForm = () => {
+const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchProjects }) => {
+  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const {
     register,
     handleSubmit,
+    control,
+    getValues,
+    setValue,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(validationSchema),
+    defaultValues: {
+      name: '',
+      about: '',
+      start_date: null,
+      deadline_date: null,
+      status: '',
+      created_by: '',
+      manager: '',
+      employe: [],
+      task: []
+    },
   });
 
-  const onSubmit = (data) => {
-    // Handle form submission
-    console.log(data);
-    // You can add your API call here to send data to the server
+  const handleFormSubmit = async (data) => {
+    console.log("🚀 ~ onSubmit ~ data:", data)
+    if (mode == 'Add') {
+
+      try {
+        const projectData = {
+          about: data?.about,
+          name: data?.name,
+          deadline_date: data?.deadline_date,
+          start_date: data?.start_date,
+          status: data?.status,
+          created_by: {
+            name: authSelector?.user?.name,
+            id: authSelector?.user?.id
+          },
+          manager: "",
+          employe: [],
+          task: []
+        };
+
+        const res = await createProject(projectData);
+        console.log('User created successfully:', res);
+        if (res?.id) {
+          onClose()
+          fetchProjects()
+        }
+
+      } catch (error) {
+        console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+      }
+    }
+    else if (mode == "Edit") {
+
+      try {
+        const projectData = {
+          about: data.about,
+          name: data.name,
+          deadline_date: data?.deadline_date,
+          start_date: data?.start_date,
+          status: data?.status,
+        };
+
+        const res = await updateProject(projectId, projectData);
+        console.log('User created successfully:', res);
+        if (res?.id) {
+          onClose()
+          fetchProjects()
+        }
+
+      } catch (error) {
+        console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+      }
+    }
   };
 
+  const onClose = () => {
+    reset();
+    setOpen(false);
+  };
+  const projectData = async () => {
+    try {
+      const res = await getOneProject(projectId);
+      console.log('User created successfully:', res);
+
+      console.log('in this-----------------');
+      setValue('name', res?.name)
+      setValue('about', res?.about)
+      setValue('status', res?.status)
+      setValue('start_date', moment(res?.start_date).format('YYYY-MM-DD'))
+      setValue('deadline_date', moment(res?.deadline_date).format('YYYY-MM-DD'))
+      
+
+    } catch (error) {
+      console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+    }
+  }
+  useEffect(() => {
+    if (projectId > 0) {
+      projectData()
+    }
+
+  }, [projectId]);
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Create Project
-        </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Create Project</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -72,9 +166,30 @@ const AddProjectForm = () => {
                 label="Description"
                 multiline
                 rows={4}
-                {...register('description')}
-                error={!!errors.description}
-                helperText={errors.description ? errors.description.message : ''}
+                {...register('about')}
+                error={!!errors.about}
+                helperText={errors.about ? errors.about.message : ''}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+
+              <Controller
+                name="status"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.role}>
+                    <InputLabel>Status</InputLabel>
+                    <Select {...field} label="Status">
+                      {statusOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.status && <p className='error-msg'>{errors.status.message}</p>}
+                  </FormControl>
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -82,9 +197,10 @@ const AddProjectForm = () => {
                 fullWidth
                 label="Start Date"
                 type="date"
-                {...register('startDate')}
-                error={!!errors.startDate}
-                helperText={errors.startDate ? errors.startDate.message : ''}
+                {...register('start_date')}
+                value={getValues('start_date')}
+                error={!!errors.start_date}
+                helperText={errors.start_date ? errors.start_date.message : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -95,64 +211,48 @@ const AddProjectForm = () => {
                 fullWidth
                 label="End Date"
                 type="date"
-                {...register('endDate')}
-                error={!!errors.endDate}
-                helperText={errors.endDate ? errors.endDate.message : ''}
+                {...register('deadline_date')}
+                value={getValues('deadline_date')}
+                error={!!errors.deadline_date}
+                helperText={errors.deadline_date ? errors.deadline_date.message : ''}
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth error={!!errors.projectType}>
-                <InputLabel id="project-type-label">Project Type</InputLabel>
-                <Select
-                  labelId="project-type-label"
-                  {...register('projectType')}
-                  defaultValue=""
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Development">Development</MenuItem>
-                  <MenuItem value="Marketing">Marketing</MenuItem>
-                  <MenuItem value="Design">Design</MenuItem>
-                  <MenuItem value="Research">Research</MenuItem>
-                </Select>
-                {errors.projectType && (
-                  <div className="error-message">{errors.projectType.message}</div>
+            {/* <Grid item xs={12} sm={6}>
+               <Controller
+                name="projectType"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.role}>
+                    <InputLabel>Project Type</InputLabel>
+                    <Select {...field} label="Project Type">
+                      {projectTypes.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.projectType && <p className='error-msg'>{errors.projectType.message}</p>}
+                  </FormControl>
                 )}
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth error={!!errors.status}>
-                <InputLabel id="status-label">Status</InputLabel>
-                <Select
-                  labelId="status-label"
-                  {...register('status')}
-                  defaultValue=""
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Not Started">Not Started</MenuItem>
-                  <MenuItem value="In Progress">In Progress</MenuItem>
-                  <MenuItem value="Completed">Completed</MenuItem>
-                </Select>
-                {errors.status && (
-                  <div className="error-message">{errors.status.message}</div>
-                )}
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit">
-                Add Project
-              </Button>
-            </Grid>
+              />
+            </Grid> */}
+
           </Grid>
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">
+          Cancel
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleSubmit(handleFormSubmit)}>
+          Add Project
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

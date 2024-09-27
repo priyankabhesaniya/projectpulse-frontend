@@ -17,3 +17,16 @@ export const initialState = {
   pageSize: FILTER._limit,
   pageIndex: 0,
 };
+export const statusOptions = [
+  { value: 'Pending', label: 'Pending' },
+  { value: 'On Going', label: 'On Going' },
+  { value: 'Qued', label: 'Qued' },
+  { value: 'Completed', label: 'Completed' },
+];
+export const projectTypes = [
+  { value: '', label: <em>None</em> },
+  { value: 'Development', label: 'Development' },
+  { value: 'Marketing', label: 'Marketing' },
+  { value: 'Design', label: 'Design' },
+  { value: 'Research', label: 'Research' },
+];
