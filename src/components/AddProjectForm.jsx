@@ -1,7 +1,359 @@
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+// import React, { useEffect, useState } from "react";
+// import { Controller, useForm } from "react-hook-form";
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import * as Yup from "yup";
+// import {
+//   TextField,
+//   Button,
+//   Grid,
+//   Select,
+//   Dialog,
+//   FormControl,
+//   DialogTitle,
+//   DialogContent,
+//   DialogActions,
+//   MenuItem,
+//   InputLabel,
+// OutlinedInput,
+// Checkbox,
+// ListItemText,
+// } from "@mui/material";
+// import { projectTypes, statusOptions } from "../pages/admin-const/constants";
+// import { createProject, getOneProject, updateProject } from "../api/Project";
+// import { useSelector } from "react-redux";
+// import moment from "moment";
+// import { getManagersPair } from "../api/Manager";
+// import { getEmployeePair } from "../api/Employe";
+
+// // Validation Schema
+// const validationSchema = Yup.object().shape({
+//   name: Yup.string()
+//     .required("Project name is required")
+//     .min(2, "Project name must be at least 2 characters"),
+//   about: Yup.string()
+//     .required("Description is required")
+//     .min(10, "Description must be at least 10 characters"),
+//   start_date: Yup.date().required("Start date is required"),
+//   deadline_date: Yup.date().required("End date is required"),
+//   status: Yup.string().required("Status is required"),
+//   // manager: Yup.string().required("Manager is required"),
+//   // employe: Yup.array().min(1, 'At least one employee must be selected'),
+// });
+
+// const AddProjectForm = ({
+//   open,
+//   mode,
+//   setOpen,
+//   projectId,
+//   setProjectId,
+//   fetchProjects,
+// }) => {
+//   const authSelector = useSelector(
+//     (state) => state.projectpulse.authUserReducer
+//   );
+//   const [managers, setManager] = useState([]);
+//   const [employees, setEmployee] = useState([]);
+//   const {
+//     register,
+//     handleSubmit,
+//     control,
+//     getValues,
+//     setValue,
+//     formState: { errors },
+//     reset,
+//   } = useForm({
+//     resolver: yupResolver(validationSchema),
+//     defaultValues: {
+//       name: "",
+//       about: "",
+//       start_date: null,
+//       deadline_date: null,
+//       status: "",
+//       created_by: "",
+//       manager: "",
+//       employe: [],
+//       task: [],
+//     },
+//   });
+
+// useEffect(() => {
+//   getAllEmployee();
+//   getAllManagers();
+// }, []);
+//   const handleFormSubmit = async (data) => {
+//     console.log("🚀 ~ onSubmit ~ data:", data);
+
+//     if (mode == "Add") {
+//       try {
+// const projectData = {
+//   ...data,
+//   created_by: {
+//     name: authSelector?.user?.name,
+//     id: authSelector?.user?.id,
+//   },
+//   manager:managers?.find((item)=>item.id === data.manager),
+//   employe:employees?.filter((item) => data?.employe?.includes(item.id))
+// };
+//         const res = await createProject(projectData);
+//         console.log("User created successfully:", res);
+//         if (res?.id) {
+//           onClose();
+//           fetchProjects();
+//         }
+//       } catch (error) {
+//         console.error("Error creating user:", error.message);
+//       }
+//     } else if (mode == "Edit") {
+//       try {
+//         const projectData = {
+//           ...data,
+//           created_by: {
+//             name: authSelector?.user?.name,
+//             id: authSelector?.user?.id,
+//           },
+//           manager:managers?.find((item)=>item.id === data.manager),
+//           employe:employees?.filter((item) => data?.employe?.includes(item.id))
+//         };
+
+//         const res = await updateProject(projectId, projectData);
+//         console.log("User created successfully:", res);
+//         if (res?.id) {
+//           onClose();
+//           fetchProjects();
+//         }
+//       } catch (error) {
+//         console.error("Error creating user:", error.message);
+//       }
+//     }
+//   };
+
+//   const onClose = () => {
+//     reset();
+//     setOpen(false);
+//   };
+
+// const getAllEmployee = async () => {
+//   try {
+//     const res = await getEmployeePair();
+//     console.log("User created successfully:", res);
+//     if (res?.length > 0) {
+//       const updatedManager = res?.map((item) => ({
+//         id: item?.id,
+//         name: item?.name,
+//       }));
+//       setEmployee(updatedManager);
+//     } else {
+//       setEmployee([]);
+//     }
+//   } catch (error) {
+//     console.error("Error creating user:", error.message);
+//   }
+// };
+// const getAllManagers = async () => {
+//   try {
+//     const res = await getManagersPair();
+//     console.log("User created successfully:", res);
+//     if (res?.length > 0) {
+//       const updatedManager = res.map((item) => ({
+//         id: item?.id,
+//         name: item?.name,
+//       }));
+//       setManager(updatedManager);
+//     } else {
+//       setManager([]);
+//     }
+//   } catch (error) {
+//     console.error("Error creating user:", error.message);
+//   }
+// };
+//   const projectData = async()=>{
+//     try {
+//         const res = await getOneProject(projectId);
+//         console.log('User created successfully:', res);
+
+//             console.log('in this-----------------');
+//            setValue('name',res?.name)
+//            setValue('about',res?.about)
+//            setValue('deadline_date',moment(res?.deadline_date).format('YYYY/MM/DD'))
+//            setValue('start_date',moment(res?.start_date).format('YYYY/MM/DD'))
+//            setValue('address',res?.address)
+//            setValue('password',res?.password)
+
+//     } catch (error) {
+//         console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+//     }
+// }
+// useEffect(() => {
+// if(projectId > 0){
+//   projectData()
+// }
+// }, [projectId])
+
+//   return (
+//     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+//       <DialogTitle>
+//         {mode === "Add" ? "Create Project" : "Edit Project"}
+//       </DialogTitle>
+//       <DialogContent>
+//         <form onSubmit={handleSubmit(handleFormSubmit)}>
+//           <Grid container spacing={2}>
+//             {/* Other fields */}
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="Project Name"
+//                 {...register("name")}
+//                 error={!!errors.name}
+//                 helperText={errors.name ? errors.name.message : ""}
+//               />
+//             </Grid>
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="Description"
+//                 multiline
+//                 rows={4}
+//                 {...register("about")}
+//                 error={!!errors.about}
+//                 helperText={errors.about ? errors.about.message : ""}
+//               />
+//             </Grid>
+//             <Grid item xs={12} sm={6}>
+//               <TextField
+//                 fullWidth
+//                 label="Start Date"
+//                 type="date"
+//                 {...register("start_date")}
+//                 error={!!errors.start_date}
+//                 helperText={errors.start_date ? errors.start_date.message : ""}
+//                 InputLabelProps={{
+//                   shrink: true,
+//                 }}
+//               />
+//             </Grid>
+//             <Grid item xs={12} sm={6}>
+//               <TextField
+//                 fullWidth
+//                 label="End Date"
+//                 type="date"
+//                 {...register("deadline_date")}
+//                 error={!!errors.deadline_date}
+//                 helperText={
+//                   errors.deadline_date ? errors.deadline_date.message : ""
+//                 }
+//                 InputLabelProps={{
+//                   shrink: true,
+//                 }}
+//               />
+//             </Grid>
+//  {/* status */}
+//  <Grid item xs={12} sm={12}>
+//               <Controller
+//                 name="status"
+//                 control={control}
+//                 render={({ field }) => (
+//                   <FormControl fullWidth error={!!errors.status}>
+//                     <InputLabel>Status</InputLabel>
+//                     <Select {...field} label="Status">
+//                       {statusOptions.map((manager) => (
+//                         <MenuItem key={manager.value} value={manager.value}>
+//                           {manager.label}
+//                         </MenuItem>
+//                       ))}
+//                     </Select>
+//                     {errors.status && (
+//                       <p className="error-msg">{errors.status.message}</p>
+//                     )}
+//                   </FormControl>
+//                 )}
+//               />
+//             </Grid>
+// {/* Assign Manager */}
+// <Grid item xs={12} sm={12}>
+//   <Controller
+//     name="manager"
+//     control={control}
+//     render={({ field }) => (
+//       <FormControl fullWidth error={!!errors.manager}>
+//         <InputLabel>Assign Manager</InputLabel>
+//         <Select {...field} label="Assign Manager">
+//           {managers.map((manager) => (
+//             <MenuItem key={manager.id} value={manager.id}>
+//               {manager.name}
+//             </MenuItem>
+//           ))}
+//         </Select>
+//         {errors.manager && (
+//           <p className="error-msg">{errors.manager.message}</p>
+//         )}
+//       </FormControl>
+//     )}
+//   />
+// </Grid>
+
+// {/* Assign Employee (Multi-Select) */}
+// <Grid item xs={12} sm={12}>
+//   <Controller
+//     name="employe"
+//     control={control}
+//     render={({ field }) => (
+//       <FormControl fullWidth error={!!errors.employe}>
+//         <InputLabel>Assign Employee</InputLabel>
+//         <Select
+//           {...field}
+//           multiple
+//           input={<OutlinedInput label="Assign Employee" />}
+//           renderValue={(selected) =>
+//             selected
+//               .map(
+//                 (id) => employees.find((emp) => emp.id === id)?.name
+//               )
+//               .join(", ")
+//           }
+//         >
+//           {employees.map((employee) => (
+//             <MenuItem key={employee.id} value={employee.id}>
+//               <Checkbox
+//                 checked={field.value.indexOf(employee.id) > -1}
+//               />
+//               <ListItemText primary={employee.name} />
+//             </MenuItem>
+//           ))}
+//         </Select>
+//         {errors.employe && (
+//           <p className="error-msg">{errors.employe.message}</p>
+//         )}
+//       </FormControl>
+//     )}
+//   />
+// </Grid>
+
+//             {/* Other fields */}
+//           </Grid>
+//         </form>
+//       </DialogContent>
+//       <DialogActions>
+//         <Button onClick={onClose} color="secondary">
+//           Cancel
+//         </Button>
+//         <Button
+//           variant="contained"
+//           color="primary"
+//           // type="submit"
+//           onClick={handleSubmit(handleFormSubmit)}
+//         >
+//           {mode === "Add" ? "Add Project" : "Update Project"}
+//         </Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
+
+// export default AddProjectForm;
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 import {
   TextField,
   Button,
@@ -14,32 +366,47 @@ import {
   DialogActions,
   MenuItem,
   InputLabel,
-} from '@mui/material';
-import { projectTypes, statusOptions } from '../pages/admin-const/constants';
-import { createProject, getOneProject, updateProject } from '../api/Project';
-import { useSelector } from 'react-redux';
-import moment from 'moment';
+  OutlinedInput,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
+import { projectTypes, statusOptions } from "../pages/admin-const/constants";
+import { createProject, getOneProject, updateProject } from "../api/Project";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import { getManagersPair } from "../api/Manager";
+import { getEmployeePair } from "../api/Employe";
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
   name: Yup.string()
-    .required('Project name is required')
-    .min(2, 'Project name must be at least 2 characters'),
+    .required("Project name is required")
+    .min(2, "Project name must be at least 2 characters"),
   about: Yup.string()
-    .required('Description is required')
-    .min(10, 'Description must be at least 10 characters'),
-  start_date: Yup.date()
-    .required('Start date is required')
-  ,
-  deadline_date: Yup.date()
-    .required('End date is required'),
+    .required("Description is required")
+    .min(10, "Description must be at least 10 characters"),
+  start_date: Yup.date().required("Start date is required"),
+  deadline_date: Yup.date().required("End date is required"),
   // .min(Yup.ref('startDate'), 'End date must be after start date'),
   // projectType: Yup.string().required('Project type is required'),
-  status: Yup.string().required('Status is required'),
+  status: Yup.string().required("Status is required"),
 });
 
-const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchProjects }) => {
-  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
+const AddProjectForm = ({
+  open,
+  mode,
+  setOpen,
+  projectId,
+  setProjectId,
+  fetchProjects,
+}) => {
+  const authSelector = useSelector(
+    (state) => state.projectpulse.authUserReducer
+  );
+  console.log(authSelector,'authSelector');
+  
+  const [managers, setManager] = useState([]);
+  const [employees, setEmployee] = useState([]);
   const {
     register,
     handleSubmit,
@@ -51,22 +418,59 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      name: '',
-      about: '',
+      name: "",
+      about: "",
       start_date: null,
       deadline_date: null,
-      status: '',
-      created_by: '',
-      manager: '',
+      status: "",
+      created_by: "",
+      manager: "",
       employe: [],
-      task: []
+      task: [],
     },
   });
 
+  const getAllEmployee = async () => {
+    try {
+      const res = await getEmployeePair();
+      console.log("User created successfully:", res);
+      if (res?.length > 0) {
+        const updatedManager = res?.map((item) => ({
+          id: item?.id,
+          name: item?.name,
+        }));
+        setEmployee(updatedManager);
+      } else {
+        setEmployee([]);
+      }
+    } catch (error) {
+      console.error("Error creating user:", error.message);
+    }
+  };
+  const getAllManagers = async () => {
+    try {
+      const res = await getManagersPair();
+      console.log("User created successfully:", res);
+      if (res?.length > 0) {
+        const updatedManager = res.map((item) => ({
+          id: item?.id,
+          name: item?.name,
+        }));
+        setManager(updatedManager);
+      } else {
+        setManager([]);
+      }
+    } catch (error) {
+      console.error("Error creating user:", error.message);
+    }
+  };
+  useEffect(() => {
+    getAllEmployee();
+    getAllManagers();
+  }, []);
   const handleFormSubmit = async (data) => {
-    console.log("🚀 ~ onSubmit ~ data:", data)
-    if (mode == 'Add') {
-
+    console.log("🚀 ~ onSubmit ~ data:", data);
+    if (mode == "Add") {
       try {
         const projectData = {
           about: data?.about,
@@ -76,44 +480,46 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
           status: data?.status,
           created_by: {
             name: authSelector?.user?.name,
-            id: authSelector?.user?.id
+            id: authSelector?.user?.id,
           },
-          manager: "",
-          employe: [],
-          task: []
+          manager: managers?.find((item) => item.id === data.manager),
+          employe: employees?.filter((item) =>
+            data?.employe?.includes(item.id)
+          ),
+          task: [],
         };
 
         const res = await createProject(projectData);
-        console.log('User created successfully:', res);
+        console.log("User created successfully:", res);
         if (res?.id) {
-          onClose()
-          fetchProjects()
+          onClose();
+          fetchProjects();
         }
-
       } catch (error) {
-        console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+        console.error("Error creating user:", error.message); // Handle error (e.g., show an error message)
       }
-    }
-    else if (mode == "Edit") {
-
+    } else if (mode == "Edit") {
       try {
         const projectData = {
-          about: data.about,
-          name: data.name,
-          deadline_date: data?.deadline_date,
-          start_date: data?.start_date,
-          status: data?.status,
+          ...data,
+          // created_by: {
+          //   name: authSelector?.user?.name,
+          //   id: authSelector?.user?.id,
+          // },
+          manager: managers?.find((item) => item.id === data.manager),
+          employe: employees?.filter((item) =>
+            data?.employe?.includes(item.id)
+          ),
         };
 
         const res = await updateProject(projectId, projectData);
-        console.log('User created successfully:', res);
+        console.log("User created successfully:", res);
         if (res?.id) {
-          onClose()
-          fetchProjects()
+          onClose();
+          fetchProjects();
         }
-
       } catch (error) {
-        console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+        console.error("Error creating user:", error.message); // Handle error (e.g., show an error message)
       }
     }
   };
@@ -125,54 +531,61 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
   const projectData = async () => {
     try {
       const res = await getOneProject(projectId);
-      console.log('User created successfully:', res);
+      console.log("User created successfully:", res);
 
-      console.log('in this-----------------');
-      setValue('name', res?.name)
-      setValue('about', res?.about)
-      setValue('status', res?.status)
-      setValue('start_date', moment(res?.start_date).format('YYYY-MM-DD'))
-      setValue('deadline_date', moment(res?.deadline_date).format('YYYY-MM-DD'))
-      
-
+      console.log("in this-----------------");
+      setValue("name", res?.name);
+      setValue("about", res?.about);
+      setValue("status", res?.status);
+      setValue("start_date", moment(res?.start_date).format("YYYY-MM-DD"));
+      setValue(
+        "deadline_date",
+        moment(res?.deadline_date).format("YYYY-MM-DD")
+      );
+      setValue("manager", res?.manager?.id);
+      setValue(
+        "employe",
+        res?.employe?.map((item) => item?.id)
+      );
     } catch (error) {
-      console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+      console.error("Error creating user:", error.message); // Handle error (e.g., show an error message)
     }
-  }
+  };
   useEffect(() => {
     if (projectId > 0) {
-      projectData()
+      projectData();
     }
-
   }, [projectId]);
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Create Project</DialogTitle>
+      <DialogTitle> {mode === "Add" ? "Add Project" : "Edit Project"}</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Grid container spacing={2}>
+       
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Project Name"
-                {...register('name')}
+                {...register("name")}
+                name="name"
                 error={!!errors.name}
-                helperText={errors.name ? errors.name.message : ''}
+                helperText={errors.name ? errors.name.message : ""}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Description"
+                label="About"
+                name="about"
                 multiline
                 rows={4}
-                {...register('about')}
+                {...register("about")}
                 error={!!errors.about}
-                helperText={errors.about ? errors.about.message : ''}
+                helperText={errors.about ? errors.about.message : ""}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
-
               <Controller
                 name="status"
                 control={control}
@@ -187,7 +600,9 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
                         </MenuItem>
                       ))}
                     </Select>
-                    {errors.status && <p className='error-msg'>{errors.status.message}</p>}
+                    {errors.status && (
+                      <p className="error-msg">{errors.status.message}</p>
+                    )}
                   </FormControl>
                 )}
               />
@@ -197,10 +612,10 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
                 fullWidth
                 label="Start Date"
                 type="date"
-                {...register('start_date')}
-                value={getValues('start_date')}
+                {...register("start_date")}
+                value={getValues("start_date")}
                 error={!!errors.start_date}
-                helperText={errors.start_date ? errors.start_date.message : ''}
+                helperText={errors.start_date ? errors.start_date.message : ""}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -211,15 +626,77 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
                 fullWidth
                 label="End Date"
                 type="date"
-                {...register('deadline_date')}
-                value={getValues('deadline_date')}
+                {...register("deadline_date")}
+                value={getValues("deadline_date")}
                 error={!!errors.deadline_date}
-                helperText={errors.deadline_date ? errors.deadline_date.message : ''}
+                helperText={
+                  errors.deadline_date ? errors.deadline_date.message : ""
+                }
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
             </Grid>
+            {/* Assign Manager */}
+            <Grid item xs={12} sm={12}>
+              <Controller
+                name="manager"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.manager}>
+                    <InputLabel>Assign Manager</InputLabel>
+                    <Select {...field} label="Assign Manager">
+                      {managers.map((manager) => (
+                        <MenuItem key={manager.id} value={manager.id}>
+                          {manager.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.manager && (
+                      <p className="error-msg">{errors.manager.message}</p>
+                    )}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
+            {/* Assign Employee (Multi-Select) */}
+            <Grid item xs={12} sm={12}>
+              <Controller
+                name="employe"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.employe}>
+                    <InputLabel>Assign Employee</InputLabel>
+                    <Select
+                      {...field}
+                      multiple
+                      input={<OutlinedInput label="Assign Employee" />}
+                      renderValue={(selected) =>
+                        selected
+                          .map(
+                            (id) => employees.find((emp) => emp.id === id)?.name
+                          )
+                          .join(", ")
+                      }
+                    >
+                      {employees.map((employee) => (
+                        <MenuItem key={employee.id} value={employee.id}>
+                          <Checkbox
+                            checked={field.value.indexOf(employee.id) > -1}
+                          />
+                          <ListItemText primary={employee.name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.employe && (
+                      <p className="error-msg">{errors.employe.message}</p>
+                    )}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
             {/* <Grid item xs={12} sm={6}>
                <Controller
                 name="projectType"
@@ -240,7 +717,6 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
                 )}
               />
             </Grid> */}
-
           </Grid>
         </form>
       </DialogContent>
@@ -248,8 +724,12 @@ const AddProjectForm = ({ open, mode, setOpen, projectId, setProjectId, fetchPro
         <Button onClick={onClose} color="secondary">
           Cancel
         </Button>
-        <Button variant="contained" color="primary" onClick={handleSubmit(handleFormSubmit)}>
-          Add Project
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit(handleFormSubmit)}
+        >
+           {mode === "Add" ? "Add Project" : "Edit Project"}
         </Button>
       </DialogActions>
     </Dialog>

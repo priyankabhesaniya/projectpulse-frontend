@@ -62,7 +62,7 @@ const watching = watch()
  
          const res = await createEmployee(userData);
          console.log('User created successfully:', res); 
-         if(res?.id){
+         if(res?.user?.id){
              onClose()
              fetchEmployee()
          }
@@ -85,7 +85,7 @@ const watching = watch()
 
       const res = await updateEmployee(employeeId,userData);
       console.log('User created successfully:', res); 
-      if(res?.id){
+      if(res?.user?.id){
           onClose()
           fetchEmployee()
       }

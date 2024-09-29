@@ -157,44 +157,38 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <div className="table-data">
-            {row?.original?.manager ? (
-          <p>{row?.original?.manager}</p>
-        ) : (
-          <Button
-          variant="contained"
-          color="primary"
-          size="small" // Set size to small
-          sx={{
-            cursor: 'pointer',
-            padding: '4px',  // Adjust padding to make the button smaller
-            fontSize: '9px',    // Reduce the font size
-            minWidth: 'auto',    // Avoid excessive width
-            textEmphasis:'ButtonFace'
-          }}
-          onClick={() => {
-            handleAssignManager(row.original.id); // Trigger function
-          }}
-        >
-          Assign
-        </Button>
-        
-        )}
+            {row?.original?.manager?.name}
           </div>
         ),
       },
       {
         Header: "Employee",
         accessor: "employee",
-        className: "name-field",
+        className: "text-center name-field",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <div className="table-data">
-            {" "}
-            {/* <p>{row?.original?.employee}</p>{" "} */}
-
-          </div>
+          <>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip className="custom-tooltip tooltip-top text-start">
+                  <ul className="custom-list">
+                    {row?.original?.employe?.map((item, id) => (
+                      <li key={id} className="custom-list-item">
+                        {item.name}
+                      </li>
+                    ))}
+                  </ul>
+                </Tooltip>
+              }
+            >
+              <Link href="#" className="text-capitalize" alt="More">
+                <img src={EyeIcon} alt="View" style={{ height: '18px', width: '18px' }} />
+              </Link>
+            </OverlayTrigger>
+          </>
         ),
-      },
+      },      
       {
         Header: "Status",
         accessor: "status",

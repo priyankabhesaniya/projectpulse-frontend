@@ -45,3 +45,29 @@ body {
   margin-top: 2px;
 }
 
+/* ============================= tooltip css */
+.custom-list {
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.custom-list-item {
+  padding: 5px; /* Add space between items */
+  margin-bottom: 5px; /* Space between each item */
+  background-color: #e6e6e6; /* Background for each list item */
+  border-radius: 3px; /* Rounded corners for each item */
+  font-weight: 600;
+}
+
+.custom-list-item:last-child {
+  margin-bottom: 0; /* Remove bottom margin from last item */
+}
+
+.custom-tooltip {
+  padding: 10px; /* Adjust padding of the tooltip */
+  max-width: 200px; /* Max width for the tooltip */
+}
+
+

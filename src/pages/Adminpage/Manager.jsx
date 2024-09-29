@@ -182,8 +182,9 @@ const Manager = ({ projects }) => {
         }
     };
     const fetchManager = async () => {
+        const updatedFilter = {...filter,role:'Manager'}
         try {
-            const res = await getAllManager(filter);
+            const res = await getAllManager(updatedFilter);
             console.log('User created successfully:', res);
             if (res?.length > 0) {
                 setManager(res)

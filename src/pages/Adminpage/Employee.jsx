@@ -192,8 +192,9 @@ const Employee = ({ projects }) => {
         }
     };
     const fetchEmployee = async () => {
+        const updatedFilter = {...filter,role:'Employee'}
         try {
-            const res = await getAllEmployee(filter);
+            const res = await getAllEmployee(updatedFilter);
             console.log('User created successfully:', res);
             if (res?.length > 0) {
                 setEmployee(res)

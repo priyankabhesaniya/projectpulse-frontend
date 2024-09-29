@@ -57,12 +57,12 @@ const watching = watch()
              password: data.password,
              phone:data.phoneNumber,
              address:data?.address,
-             role:'Employee',
+             role:'Manager',
          };
  
          const res = await createManager(userData);
          console.log('User created successfully:', res); 
-         if(res?.id){
+         if(res?.user?.id){
              onClose()
              fetchManager()
          }
@@ -85,7 +85,7 @@ const watching = watch()
 
       const res = await updateManager(managerId,userData);
       console.log('User created successfully:', res); 
-      if(res?.id){
+      if(res?.user?.id){
           onClose()
           fetchManager()
       }

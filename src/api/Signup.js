@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const createUser = async (userData) => {
     try {
-        const response = await axios.post('admin', userData, {
+        const response = await axios.post('users', userData, {
             headers: {
               'Content-Type': 'application/json'
             }

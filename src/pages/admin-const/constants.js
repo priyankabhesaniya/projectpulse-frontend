@@ -1,4 +1,4 @@
-export const headers = {};
+
 export const PAGE_LENGTH = [10, 25, 50, 100];
 const sort = {
   Descending: "desc",
@@ -30,3 +30,14 @@ export const projectTypes = [
   { value: 'Design', label: 'Design' },
   { value: 'Research', label: 'Research' },
 ];
+
+const auth = JSON.parse(localStorage.getItem('persist:root'))
+const authUserReducer = JSON.parse(auth?.authUserReducer)
+console.log("🚀 ~ authUserReducer:", authUserReducer.access_token)
+
+export const headers = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${authUserReducer?.access_token}`
+  }
+}
