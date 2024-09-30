@@ -1,8 +1,10 @@
 import React from 'react';
 import { List, ListItem, ListItemText, Drawer, Divider } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
+  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   // Define styles for active and inactive states
   const linkStyle = {
     textDecoration: 'none',
@@ -42,6 +44,8 @@ const Sidebar = () => {
           >
             <ListItemText primary="Project" />
           </ListItem>
+          {
+            authSelector?.user?.role == 'Admin' && (
 
           <ListItem
             button
@@ -55,6 +59,12 @@ const Sidebar = () => {
           >
             <ListItemText primary="Manager" />
           </ListItem>
+            )
+          }
+          {
+            authSelector?.user?.role == 'Admin' &&
+            (
+
           <ListItem
             button
             component={NavLink}
@@ -67,6 +77,8 @@ const Sidebar = () => {
           >
             <ListItemText primary="Employee" />
           </ListItem>
+            )
+          }
 
           <Divider />
           {/* Add more items here */}

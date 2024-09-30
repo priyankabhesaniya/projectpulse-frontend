@@ -19,8 +19,8 @@ import {
 
 import EmployeeForm from '../../components/EmployeeForm';
 import { deleteProject, getAllProject } from '../../api/Project';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import AddProjectForm from '../../components/AddProjectForm';
+import { Link } from 'react-router-dom';
+import AddProjectForm from '../../components/Manager/AddProjectForm';
 import CheckBadges from '../../components/status/CheckBadges';
 import CheckAll from '../../components/DataTable/CheckAll'
 import TableTrash from "../../asset/images/table-trash.svg"
@@ -28,9 +28,7 @@ import EyeIcon from "../../asset/images/eye-icon.svg"
 import moment from 'moment/moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { CheckCircle } from '@mui/icons-material';
 const ProjectList = () => {
-  const navigate = useNavigate()
   const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const [showHeader, setShowHeader] = useState(false);
   const [filter, setFilter] = useState(FILTER)
@@ -212,9 +210,7 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <>
-            <CheckCircle color="primary" onClick={()=>{
-              navigate(`/project/${row?.original?.id}`)
-            }}/>
+
           </>
         ),
       },
@@ -241,32 +237,32 @@ const handleAssignManager = (id)=>{
           ),
         },
         ...columns,
-        {
-          Header: "",
-          accessor: "Actions",
-          className: "text-center text-nowrap action-w-40",
-          width: "100",
-          disableSortBy: true,
-          Cell: ({ row }) => (
-            <>
-              {
-                <div className="table-data">
-                  <div className="d-flex align-items-center justify-content-center table-icon">
-                    <Link
-                      onClick={() => {
+        // {
+        //   Header: "",
+        //   accessor: "Actions",
+        //   className: "text-center text-nowrap action-w-40",
+        //   width: "100",
+        //   disableSortBy: true,
+        //   Cell: ({ row }) => (
+        //     <>
+        //       {
+        //         <div className="table-data">
+        //           <div className="d-flex align-items-center justify-content-center table-icon">
+        //             <Link
+        //               onClick={() => {
 
-                        removeProjects(row.original.id)
+        //                 removeProjects(row.original.id)
 
-                      }}
-                    >
-                      <img src={TableTrash} alt="Delete" />
-                    </Link>
-                  </div>
-                </div>
-              }
-            </>
-          ),
-        },
+        //               }}
+        //             >
+        //               <img src={TableTrash} alt="Delete" />
+        //             </Link>
+        //           </div>
+        //         </div>
+        //       }
+        //     </>
+        //   ),
+        // },
       ];
 
       // Conditionally remove the ID column based on the showHeader state
@@ -353,7 +349,7 @@ const handleAssignManager = (id)=>{
 
 
 
-            <button className="btn round-add-btn"
+            {/* <button className="btn round-add-btn"
               onClick={() => handleOpenAdd('Add')}
             >
               <svg
@@ -366,7 +362,7 @@ const handleAssignManager = (id)=>{
                 <path d="M9.26058 4.25626L5.68135 4.24032L5.66014 0.648496C5.62302 0.292501 5.32608 0.0162069 4.97081 0.000266762C4.57842 -0.01036 4.24966 0.297815 4.23905 0.691003L4.26026 4.24032L0.654516 4.2297C0.304546 4.25095 0.0235098 4.53256 0.00229957 4.88324C-0.0295158 5.27643 0.272731 5.6218 0.665121 5.65368L4.26557 5.68024L4.28678 9.2827C4.28678 9.67589 4.61023 10 5.00262 10C5.18821 9.98406 5.35789 9.89904 5.47985 9.76621C5.61242 9.644 5.69726 9.47398 5.70786 9.29332L5.68665 5.68024L9.23938 5.7015C9.43027 5.7015 9.60525 5.63242 9.73782 5.49959C9.89159 5.37738 9.98704 5.19673 9.99764 4.99482C10.0029 4.97888 9.99764 4.96294 9.99764 4.95231C9.98173 4.55381 9.65298 4.24564 9.26058 4.25626Z" />
               </svg>
               Create Project
-            </button>
+            </button> */}
           </div>
         </div>
         {isShow ? (

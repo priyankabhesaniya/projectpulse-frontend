@@ -46,6 +46,7 @@ const App = () => {
   pauseOnFocusLoss
   draggable
   pauseOnHover
+  limit={1}
 />
 
     </>

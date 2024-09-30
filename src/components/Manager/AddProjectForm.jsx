@@ -19,12 +19,12 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
-import { projectTypes, statusOptions } from "../pages/admin-const/constants";
-import { createProject, getOneProject, updateProject } from "../api/Project";
+import { projectTypes, statusOptions } from "../../pages/admin-const/constants";
+import { createProject, getOneProject, updateProject } from "../../api/Project";
 import { useSelector } from "react-redux";
 import moment from "moment";
-import { getManagersPair } from "../api/Manager";
-import { getEmployeePair } from "../api/Employe";
+import { getManagersPair } from "../../api/Manager";
+import { getEmployeePair } from "../../api/Employe";
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
@@ -155,7 +155,7 @@ const AddProjectForm = ({
           //   name: authSelector?.user?.name,
           //   id: authSelector?.user?.id,
           // },
-          manager: managers?.find((item) => item.id === data.manager),
+        //   manager: managers?.find((item) => item.id === data.manager),
           employe: employees?.filter((item) =>
             data?.employe?.includes(item.id)
           ),
@@ -287,7 +287,7 @@ const AddProjectForm = ({
               />
             </Grid>
             {/* Assign Manager */}
-            <Grid item xs={12} sm={12}>
+            {/* <Grid item xs={12} sm={12}>
               <Controller
                 name="manager"
                 control={control}
@@ -307,7 +307,7 @@ const AddProjectForm = ({
                   </FormControl>
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* Assign Employee (Multi-Select) */}
             <Grid item xs={12} sm={12}>

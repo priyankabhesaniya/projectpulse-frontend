@@ -13,6 +13,7 @@ import {
   DialogActions,
 } from '@mui/material';
 import { createEmployee, getOneEmployee, updateEmployee } from '../api/Employe';
+import { useSelector } from 'react-redux';
 const EmployeeForm = ({ open,mode,setOpen ,employeeId,setEmployeeId,fetchEmployee}) => {
     console.log("🚀 ~ EmployeeForm ~ mode:", mode)
     const validationSchema = Yup.object().shape({
@@ -22,6 +23,9 @@ const EmployeeForm = ({ open,mode,setOpen ,employeeId,setEmployeeId,fetchEmploye
         address: Yup.string().required('Address is required').min(10, 'Address must be at least 10 characters'),
         password: Yup.string().required('Password is required')
       });
+      const authSelector = useSelector(
+        (state) => state.projectpulse.authUserReducer
+      );
   const {
     register,
     handleSubmit,
@@ -60,9 +64,9 @@ const watching = watch()
              projects:[]
          };
  
-         const res = await createEmployee(userData);
+         const res = await createEmployee(userData,authSelector?.access_token);
          console.log('User created successfully:', res); 
-         if(res?.user?.id){
+         if(res?.id){
              onClose()
              fetchEmployee()
          }
@@ -83,9 +87,9 @@ const watching = watch()
           // role:'Employee',
       };
 
-      const res = await updateEmployee(employeeId,userData);
+      const res = await updateEmployee(employeeId,userData,authSelector?.access_token);
       console.log('User created successfully:', res); 
-      if(res?.user?.id){
+      if(res?.id){
           onClose()
           fetchEmployee()
       }
@@ -102,7 +106,7 @@ const watching = watch()
   }
 const employeeData = async()=>{
     try {
-        const res = await getOneEmployee(employeeId);
+        const res = await getOneEmployee(employeeId,authSelector?.access_token);
         console.log('User created successfully:', res);
        
             console.log('in this-----------------');

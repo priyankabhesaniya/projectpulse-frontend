@@ -11,7 +11,7 @@ const CheckBadges = ({ status }) => {
             return <Completed />;
           } else if (status === "Qued") {
             return <Qued />;
-          } else if (status === "On Going") {
+          } else if (status === "On Going" || status === "In Progress") {
             return <Progress />;
           } else if (status === "Pending") {
             return <Pending />;

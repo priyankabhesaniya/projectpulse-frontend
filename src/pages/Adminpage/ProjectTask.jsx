@@ -18,8 +18,8 @@ import {
 } from '@mui/material';
 
 import EmployeeForm from '../../components/EmployeeForm';
-import { deleteProject, getAllProject } from '../../api/Project';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { deleteProject, getAllProject,getOneProject,getTasksByProjectId } from '../../api/Project';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import AddProjectForm from '../../components/AddProjectForm';
 import CheckBadges from '../../components/status/CheckBadges';
 import CheckAll from '../../components/DataTable/CheckAll'
@@ -28,23 +28,25 @@ import EyeIcon from "../../asset/images/eye-icon.svg"
 import moment from 'moment/moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { CheckCircle } from '@mui/icons-material';
-const ProjectList = () => {
-  const navigate = useNavigate()
+import TaskCreateForm from '../../components/TaskCreateForm';
+
+const ProjectTask = () => {
+    const {id} = useParams()
+    const navigate = useNavigate()
   const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const [showHeader, setShowHeader] = useState(false);
   const [filter, setFilter] = useState(FILTER)
-  console.log("🚀 ~ ProjectList ~ filter:", filter)
+  console.log("🚀 ~ ProjectTask ~ filter:", filter)
   const [isLoading, setisLoading] = useState(false)
   const [selectedRows, setSelectedRows] = useState([]);
   const [isShow, setIsShow] = useState(false)
   const [open, setOpen] = useState(false);
-  const [projectId, setProjectId] = useState(null)
+  const [taskId, setTaskId] = useState(null)
   const [mode, setMode] = useState('Add'); // 'add' for adding a new projects
   const [initialValues, setInitialValues] = useState({});
   const [projects, setProjects] = useState([])
   const [totalRecords, settotalRecords] = useState(0)
-  // Function to handle opening the modal for adding an projects
+  
   const handleOpenAdd = (mode) => {
     setMode(mode);
     setOpen(true);
@@ -67,7 +69,7 @@ const handleAssignManager = (id)=>{
           <>
             <div className="table-data">
               <Link onClick={() => {
-                setProjectId(row.original?.id)
+                setTaskId(row.original?.id)
                 setMode('Edit')
                 setOpen(true)
               }}>
@@ -79,20 +81,20 @@ const handleAssignManager = (id)=>{
         )
       },
       {
-        Header: "Name",
+        Header: "Title",
         accessor: "name",
         className: "name-field",
         disableSortBy: true,
         Cell: ({ row }) => (
           <div className="table-data">
 
-            <p>{row?.original?.name}</p>
+            <p>{row?.original?.title}</p>
           </div>
         ),
       },
       {
-        Header: "About",
-        accessor: "about",
+        Header: "Discription",
+        accessor: "discription",
         className: "text-center status-table",
         disableSortBy: true,
         Cell: ({ row }) => (
@@ -106,7 +108,7 @@ const handleAssignManager = (id)=>{
                       placement="top"
                       overlay={
                         <Tooltip className="custom-tooltip tooltip-top text-start">
-                          <p className="mb-0 mt-1">{row?.original?.about}</p>
+                          <p className="mb-0 mt-1">{row?.original?.description}</p>
                         </Tooltip>
                       }
                     >
@@ -118,30 +120,31 @@ const handleAssignManager = (id)=>{
           
           </>
         ),
-      }, {
-        Header: "Created By",
-        accessor: "created_by",
-        className: "name-field",
-        disableSortBy: true,
-        Cell: ({ row }) => (
-          <div className="table-data">
-            {" "}
-            <p>{row?.original?.created_by?.name}</p>{" "}
-          </div>
-        ),
-      },
-      {
-        Header: "Start Date",
-        accessor: "start_date",
-        className: "name-field",
-        disableSortBy: true,
-        Cell: ({ row }) => (
-          <div className="table-data">
-            {" "}
-            <p>{moment(row?.original?.start_date).format("MM-DD-YYYY")}</p>{" "}
-          </div>
-        ),
-      },
+      }, 
+    //   {
+    //     Header: "Created By",
+    //     accessor: "created_by",
+    //     className: "name-field",
+    //     disableSortBy: true,
+    //     Cell: ({ row }) => (
+    //       <div className="table-data">
+    //         {" "}
+    //         <p>{row?.original?.created_by?.name}</p>{" "}
+    //       </div>
+    //     ),
+    //   },
+    //   {
+    //     Header: "Start Date",
+    //     accessor: "start_date",
+    //     className: "name-field",
+    //     disableSortBy: true,
+    //     Cell: ({ row }) => (
+    //       <div className="table-data">
+    //         {" "}
+    //         <p>{moment(row?.original?.start_date).format("MM-DD-YYYY")}</p>{" "}
+    //       </div>
+    //     ),
+    //   },
       {
         Header: "Deadline Date",
         accessor: "deadline_date",
@@ -154,42 +157,27 @@ const handleAssignManager = (id)=>{
           </div>
         ),
       },
+    //   {
+    //     Header: "Manager",
+    //     accessor: "manager",
+    //     className: "name-field",
+    //     disableSortBy: true,
+    //     Cell: ({ row }) => (
+        //   <div className="table-data">
+        //     {row?.original?.manager?.name}
+        //   </div>
+    //     ),
+    //   },
       {
-        Header: "Manager",
-        accessor: "manager",
+        Header: "Assigned To",
+        accessor: "assigned_to",
         className: "name-field",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <div className="table-data">
-            {row?.original?.manager?.name}
-          </div>
-        ),
-      },
-      {
-        Header: "Employee",
-        accessor: "employee",
-        className: "text-center name-field",
-        disableSortBy: true,
-        Cell: ({ row }) => (
           <>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={
-                <Tooltip className="custom-tooltip tooltip-top text-start">
-                  <ul className="custom-list">
-                    {row?.original?.employe?.map((item, id) => (
-                      <li key={id} className="custom-list-item">
-                        {item.name}
-                      </li>
-                    ))}
-                  </ul>
-                </Tooltip>
-              }
-            >
-              <Link href="#" className="text-capitalize" alt="More">
-                <img src={EyeIcon} alt="View" style={{ height: '18px', width: '18px' }} />
-              </Link>
-            </OverlayTrigger>
+            <div className="table-data">
+            {row?.original?.assigned_to?.name}
+          </div>
           </>
         ),
       },      
@@ -205,19 +193,17 @@ const handleAssignManager = (id)=>{
           </>
         ),
       },
-      {
-        Header: "Tasks",
-        accessor: "task",
-        className: "name-field",
-        disableSortBy: true,
-        Cell: ({ row }) => (
-          <>
-            <CheckCircle color="primary" onClick={()=>{
-              navigate(`/project/${row?.original?.id}`)
-            }}/>
-          </>
-        ),
-      },
+    //   {
+    //     Header: "Tasks",
+    //     accessor: "task",
+    //     className: "name-field",
+    //     disableSortBy: true,
+    //     Cell: ({ row }) => (
+    //       <>
+
+    //       </>
+    //     ),
+    //   },
 
     ],
     [showHeader]
@@ -290,21 +276,27 @@ const handleAssignManager = (id)=>{
       setIsShow(true);
     }
   };
-  const fetchProjects = async () => {
+  const fetchTasks = async () => {
     setisLoading(true)
     try {
-      const res = await getAllProject(filter,authSelector?.access_token);
-      console.log('User created successfully:', res);
-      if (res?.length > 0) {
+      const res = await getTasksByProjectId(id,authSelector?.access_token);
+      console.log('check check', res);
+     
         setProjects(res)
-        settotalRecords(res?.length)
+        settotalRecords(res?.length ? res?.length : 0)
         setisLoading(false)
-      }
-      else {
-        setProjects([])
-        settotalRecords(0)
-        setisLoading(false)
-      }
+      
+    //   if (res?.length > 0) {
+    //     console.log('task', res?.task);
+        // setProjects(res?.task)
+        // settotalRecords(res?.task?.length)
+        // setisLoading(false)
+    //   }
+    //   else {
+        // setProjects([])
+        // settotalRecords(0)
+        // setisLoading(false)
+    //   }
     } catch (error) {
       console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
     }
@@ -318,7 +310,7 @@ const handleAssignManager = (id)=>{
       console.log('User created successfully:', res);
 
       setTimeout(() => {
-        fetchProjects()
+        fetchTasks()
 
       }, 1000);
     } catch (error) {
@@ -326,13 +318,13 @@ const handleAssignManager = (id)=>{
     }
   }
   useEffect(() => {
-    fetchProjects()
-  }, [filter]);
+    fetchTasks()
+  }, []);
   return (
     <>
       <div className="table-wrapper mt-2">
         <div className="table-header filter-action nowrap">
-          <h5>Projects</h5>
+          <h5>Tasks</h5>
           <div className="table-buttons-block">
             {/* <button
                             className={`btn table-action-btn ${isShow ? "active" : ""}`}
@@ -365,7 +357,7 @@ const handleAssignManager = (id)=>{
               >
                 <path d="M9.26058 4.25626L5.68135 4.24032L5.66014 0.648496C5.62302 0.292501 5.32608 0.0162069 4.97081 0.000266762C4.57842 -0.01036 4.24966 0.297815 4.23905 0.691003L4.26026 4.24032L0.654516 4.2297C0.304546 4.25095 0.0235098 4.53256 0.00229957 4.88324C-0.0295158 5.27643 0.272731 5.6218 0.665121 5.65368L4.26557 5.68024L4.28678 9.2827C4.28678 9.67589 4.61023 10 5.00262 10C5.18821 9.98406 5.35789 9.89904 5.47985 9.76621C5.61242 9.644 5.69726 9.47398 5.70786 9.29332L5.68665 5.68024L9.23938 5.7015C9.43027 5.7015 9.60525 5.63242 9.73782 5.49959C9.89159 5.37738 9.98704 5.19673 9.99764 4.99482C10.0029 4.97888 9.99764 4.96294 9.99764 4.95231C9.98173 4.55381 9.65298 4.24564 9.26058 4.25626Z" />
               </svg>
-              Create Project
+              Create Task
             </button>
           </div>
         </div>
@@ -463,16 +455,16 @@ const handleAssignManager = (id)=>{
         />
       </div>
 
-      <AddProjectForm
+      <TaskCreateForm
         open={open}
         setOpen={setOpen}
         mode={mode}
-        projectId={projectId}
-        setProjectId={setProjectId}
-        fetchProjects={fetchProjects}
+        taskId={taskId}
+        setTaskId={setTaskId}
+        fetchTasks={fetchTasks}
       />
     </>
   );
 };
 
-export default ProjectList;
+export default ProjectTask;

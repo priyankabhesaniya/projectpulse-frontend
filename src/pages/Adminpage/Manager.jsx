@@ -22,7 +22,9 @@ import ManagerForm from '../../components/ManagerForm';
 import { DeleteBtn } from '../../components/status/Badges';
 import CheckAll from '../../components/DataTable/CheckAll'
 import TableTrash from "../../asset/images/table-trash.svg"
+import { useSelector } from 'react-redux';
 const Manager = ({ projects }) => {
+    const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
     const [showHeader, setShowHeader] = useState(false);
     const [filter, setFilter] = useState(FILTER)
     const [isLoading, setisLoading] = useState(false)
@@ -184,7 +186,7 @@ const Manager = ({ projects }) => {
     const fetchManager = async () => {
         const updatedFilter = {...filter,role:'Manager'}
         try {
-            const res = await getAllManager(updatedFilter);
+            const res = await getAllManager(updatedFilter,authSelector?.access_token);
             console.log('User created successfully:', res);
             if (res?.length > 0) {
                 setManager(res)
@@ -196,7 +198,7 @@ const Manager = ({ projects }) => {
     }
     const removeManager = async (id) => {
         try {
-            const res = await deleteManager(id);
+            const res = await deleteManager(id,authSelector?.access_token);
             console.log('User created successfully:', res);
 
             fetchManager()

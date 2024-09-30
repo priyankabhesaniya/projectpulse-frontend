@@ -12,6 +12,7 @@ import {
   DialogActions,
 } from '@mui/material';
 import { createManager, getOneManager, updateManager } from '../api/Manager';
+import { useSelector } from 'react-redux';
 
 const ManagerForm = ({ open,mode,setOpen ,managerId,setManagerId,fetchManager}) => {
     console.log("🚀 ~ ManagerForm ~ mode:", mode)
@@ -22,6 +23,9 @@ const ManagerForm = ({ open,mode,setOpen ,managerId,setManagerId,fetchManager}) 
         address: Yup.string().required('Address is required').min(10, 'Address must be at least 10 characters'),
         password: Yup.string().required('Password is required')
       });
+      const authSelector = useSelector(
+        (state) => state.projectpulse.authUserReducer
+      );
   const {
     register,
     handleSubmit,
@@ -60,9 +64,9 @@ const watching = watch()
              role:'Manager',
          };
  
-         const res = await createManager(userData);
+         const res = await createManager(userData,authSelector?.access_token);
          console.log('User created successfully:', res); 
-         if(res?.user?.id){
+         if(res?.id){
              onClose()
              fetchManager()
          }
@@ -83,9 +87,9 @@ const watching = watch()
           // role:'Employee',
       };
 
-      const res = await updateManager(managerId,userData);
+      const res = await updateManager(managerId,userData,authSelector?.access_token);
       console.log('User created successfully:', res); 
-      if(res?.user?.id){
+      if(res?.id){
           onClose()
           fetchManager()
       }
@@ -102,7 +106,7 @@ const watching = watch()
   }
 const employeeData = async()=>{
     try {
-        const res = await getOneManager(managerId);
+        const res = await getOneManager(managerId,authSelector?.access_token);
         console.log('User created successfully:', res);
        
             console.log('in this-----------------');

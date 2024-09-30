@@ -31,13 +31,12 @@ export const projectTypes = [
   { value: 'Research', label: 'Research' },
 ];
 
-const auth = JSON.parse(localStorage.getItem('persist:root'))
-const authUserReducer = JSON.parse(auth?.authUserReducer)
-console.log("🚀 ~ authUserReducer:", authUserReducer.access_token)
 
-export const headers = {
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${authUserReducer?.access_token}`
+export const headers = (token)=>{
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
   }
 }
