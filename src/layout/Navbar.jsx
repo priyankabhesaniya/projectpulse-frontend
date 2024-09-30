@@ -5,7 +5,7 @@ import StarIcon from '@mui/icons-material/Star';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useDispatch } from 'react-redux';
 import { resetAuthData } from '../store/slices/authUser/authUserSlice';
-
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 const Navbar = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -57,11 +57,36 @@ const Navbar = () => {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
+            <MenuItem onClick={handleMenuClose}>Starred Item 1</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Starred Item 2</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Starred Item 3</MenuItem>
+          </Menu>
+        </div>
+  {/* Starred Dropdown */}
+  <div style={{ display: 'flex', alignItems: 'center',marginLeft:'20px'}}>
+  <IconButton
+            aria-controls="recent-menu"
+            aria-haspopup="true"
+            onClick={handleMenuClick}
+            color="inherit"
+          >
+            <AccessTimeIcon />
+            <span style={{ marginLeft: '4px' }}>Recents</span> {/* Text next to star icon */}
+          </IconButton>
+          <Menu
+            id="recent-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
             <MenuItem onClick={handleMenuClose}>Recent Item 1</MenuItem>
             <MenuItem onClick={handleMenuClose}>Recent Item 2</MenuItem>
             <MenuItem onClick={handleMenuClose}>Recent Item 3</MenuItem>
           </Menu>
         </div>
+       
+
        </div>
 
         {/* Logout Button with Custom Style */}

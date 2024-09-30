@@ -62,7 +62,7 @@ const Sidebar = () => {
             )
           }
           {
-            authSelector?.user?.role == 'Admin' &&
+            (authSelector?.user?.role == 'Admin' || authSelector?.user?.role == 'Manager') &&
             (
 
           <ListItem
@@ -79,8 +79,20 @@ const Sidebar = () => {
           </ListItem>
             )
           }
-
+          
           <Divider />
+          <ListItem
+            button
+            component={NavLink}
+            to="/calender"
+            style={({ isActive }) => ({
+              ...linkStyle,
+              backgroundColor: isActive ? '#f0f0f0' : 'transparent',
+              fontWeight: isActive ? 'bold' : 'normal',
+            })}
+          >
+            <ListItemText primary="Calender" />
+          </ListItem>
           {/* Add more items here */}
         </List>
       </div>

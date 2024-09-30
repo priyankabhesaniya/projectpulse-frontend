@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import DataTable from '../../components/DataTable';
-import { initialState, FILTER, PAGE_LENGTH } from '../admin-const/constants';
-import { useForm, Controller } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useEffect, useMemo, useState } from "react";
+import DataTable from "../../components/DataTable";
+import { initialState, FILTER, PAGE_LENGTH } from "../admin-const/constants";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import {
   TextField,
@@ -14,50 +14,57 @@ import {
   Select,
   Grid,
   Box,
-  Typography
-} from '@mui/material';
+  Typography,
+} from "@mui/material";
 
-import EmployeeForm from '../../components/EmployeeForm';
-import { deleteProject, getAllProject,getOneProject,getTasksByProjectId } from '../../api/Project';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import AddProjectForm from '../../components/AddProjectForm';
-import CheckBadges from '../../components/status/CheckBadges';
-import CheckAll from '../../components/DataTable/CheckAll'
-import TableTrash from "../../asset/images/table-trash.svg"
-import EyeIcon from "../../asset/images/eye-icon.svg"
-import moment from 'moment/moment';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import TaskCreateForm from '../../components/TaskCreateForm';
+import EmployeeForm from "../../components/EmployeeForm";
+import {
+  deleteProject,
+  getAllProject,
+  getOneProject,
+  getTasksByProjectId,
+} from "../../api/Project";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import AddProjectForm from "../../components/AddProjectForm";
+import CheckBadges from "../../components/status/CheckBadges";
+import CheckAll from "../../components/DataTable/CheckAll";
+import TableTrash from "../../asset/images/table-trash.svg";
+import EyeIcon from "../../asset/images/eye-icon.svg";
+import moment from "moment/moment";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import TaskCreateForm from "../../components/TaskCreateForm";
 
 const ProjectTask = () => {
-    const {id} = useParams()
-    const navigate = useNavigate()
-  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const authSelector = useSelector(
+    (state) => state.projectpulse.authUserReducer
+  );
   const [showHeader, setShowHeader] = useState(false);
-  const [filter, setFilter] = useState(FILTER)
-  console.log("🚀 ~ ProjectTask ~ filter:", filter)
-  const [isLoading, setisLoading] = useState(false)
+  const [filter, setFilter] = useState(FILTER);
+  console.log("🚀 ~ ProjectTask ~ filter:", filter);
+  const [isLoading, setisLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(false);
   const [open, setOpen] = useState(false);
-  const [taskId, setTaskId] = useState(null)
-  const [mode, setMode] = useState('Add'); // 'add' for adding a new projects
+  const [taskId, setTaskId] = useState(null);
+  const [mode, setMode] = useState("Add"); // 'add' for adding a new projects
   const [initialValues, setInitialValues] = useState({});
-  const [projects, setProjects] = useState([])
-  const [totalRecords, settotalRecords] = useState(0)
-  
+  const [projects, setProjects] = useState([]);
+  const [totalRecords, settotalRecords] = useState(0);
+
   const handleOpenAdd = (mode) => {
     setMode(mode);
     setOpen(true);
   };
 
-  const { handleSubmit, control, formState: { errors } } = useForm({
-
-  });
-const handleAssignManager = (id)=>{
-
-}
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({});
+  const handleAssignManager = (id) => {};
   const projectColumn = useMemo(
     () => [
       {
@@ -68,17 +75,25 @@ const handleAssignManager = (id)=>{
         Cell: ({ row }) => (
           <>
             <div className="table-data">
-              <Link onClick={() => {
-                setTaskId(row.original?.id)
-                setMode('Edit')
-                setOpen(true)
-              }}>
+            {
+              authSelector?.user?.role !== "Employee" ? (
+
+              <Link
+                onClick={() => {
+                  setTaskId(row.original?.id);
+                  setMode("Edit");
+                  setOpen(true);
+                }}
+              >
                 {row?.original?.id}
               </Link>
+              ):(
+                <p>{row?.original?.id}</p>
+              )
+            }
             </div>
-
           </>
-        )
+        ),
       },
       {
         Header: "Title",
@@ -87,7 +102,6 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <div className="table-data">
-
             <p>{row?.original?.title}</p>
           </div>
         ),
@@ -99,52 +113,53 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <>
-           
-             
-                {/* {row?.original?.about?.length > 28 ? ( */}
-                  <>
-                    {/* {row?.original?.about?.slice(0, 28)} */}
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={
-                        <Tooltip className="custom-tooltip tooltip-top text-start">
-                          <p className="mb-0 mt-1">{row?.original?.description}</p>
-                        </Tooltip>
-                      }
-                    >
-                      <Link href="#" className="text-capitalize" alt="More" >
-                      <img src={EyeIcon} alt="Delete" style={{height:'18px',width:'18px'}}/>
-                      </Link>
-                    </OverlayTrigger>
-                  </>
-          
+            {/* {row?.original?.about?.length > 28 ? ( */}
+            <>
+              {/* {row?.original?.about?.slice(0, 28)} */}
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip className="custom-tooltip tooltip-top text-start">
+                    <p className="mb-0 mt-1">{row?.original?.description}</p>
+                  </Tooltip>
+                }
+              >
+                <Link href="#" className="text-capitalize" alt="More">
+                  <img
+                    src={EyeIcon}
+                    alt="Delete"
+                    style={{ height: "18px", width: "18px" }}
+                  />
+                </Link>
+              </OverlayTrigger>
+            </>
           </>
         ),
-      }, 
-    //   {
-    //     Header: "Created By",
-    //     accessor: "created_by",
-    //     className: "name-field",
-    //     disableSortBy: true,
-    //     Cell: ({ row }) => (
-    //       <div className="table-data">
-    //         {" "}
-    //         <p>{row?.original?.created_by?.name}</p>{" "}
-    //       </div>
-    //     ),
-    //   },
-    //   {
-    //     Header: "Start Date",
-    //     accessor: "start_date",
-    //     className: "name-field",
-    //     disableSortBy: true,
-    //     Cell: ({ row }) => (
-    //       <div className="table-data">
-    //         {" "}
-    //         <p>{moment(row?.original?.start_date).format("MM-DD-YYYY")}</p>{" "}
-    //       </div>
-    //     ),
-    //   },
+      },
+      //   {
+      //     Header: "Created By",
+      //     accessor: "created_by",
+      //     className: "name-field",
+      //     disableSortBy: true,
+      //     Cell: ({ row }) => (
+      //       <div className="table-data">
+      //         {" "}
+      //         <p>{row?.original?.created_by?.name}</p>{" "}
+      //       </div>
+      //     ),
+      //   },
+      //   {
+      //     Header: "Start Date",
+      //     accessor: "start_date",
+      //     className: "name-field",
+      //     disableSortBy: true,
+      //     Cell: ({ row }) => (
+      //       <div className="table-data">
+      //         {" "}
+      //         <p>{moment(row?.original?.start_date).format("MM-DD-YYYY")}</p>{" "}
+      //       </div>
+      //     ),
+      //   },
       {
         Header: "Deadline Date",
         accessor: "deadline_date",
@@ -153,21 +168,23 @@ const handleAssignManager = (id)=>{
         Cell: ({ row }) => (
           <div className="table-data">
             {" "}
-            <p>{moment(row?.original?.deadline_date).format("MM-DD-YYYY")}</p>{" "}
+            <p>
+              {moment(row?.original?.deadline_date).format("MM-DD-YYYY")}
+            </p>{" "}
           </div>
         ),
       },
-    //   {
-    //     Header: "Manager",
-    //     accessor: "manager",
-    //     className: "name-field",
-    //     disableSortBy: true,
-    //     Cell: ({ row }) => (
-        //   <div className="table-data">
-        //     {row?.original?.manager?.name}
-        //   </div>
-    //     ),
-    //   },
+      //   {
+      //     Header: "Manager",
+      //     accessor: "manager",
+      //     className: "name-field",
+      //     disableSortBy: true,
+      //     Cell: ({ row }) => (
+      //   <div className="table-data">
+      //     {row?.original?.manager?.name}
+      //   </div>
+      //     ),
+      //   },
       {
         Header: "Assigned To",
         accessor: "assigned_to",
@@ -175,36 +192,32 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <>
-            <div className="table-data">
-            {row?.original?.assigned_to?.name}
-          </div>
+            <div className="table-data">{row?.original?.assigned_to?.name}</div>
           </>
         ),
-      },      
+      },
       {
         Header: "Status",
         accessor: "status",
         className: "text-center status-table",
         disableSortBy: true,
-        Cell: ({ row }) =>
-        (
+        Cell: ({ row }) => (
           <>
             <CheckBadges status={row?.original?.status} />
           </>
         ),
       },
-    //   {
-    //     Header: "Tasks",
-    //     accessor: "task",
-    //     className: "name-field",
-    //     disableSortBy: true,
-    //     Cell: ({ row }) => (
-    //       <>
+      //   {
+      //     Header: "Tasks",
+      //     accessor: "task",
+      //     className: "name-field",
+      //     disableSortBy: true,
+      //     Cell: ({ row }) => (
+      //       <>
 
-    //       </>
-    //     ),
-    //   },
-
+      //       </>
+      //     ),
+      //   },
     ],
     [showHeader]
   );
@@ -227,6 +240,7 @@ const handleAssignManager = (id)=>{
           ),
         },
         ...columns,
+        
         {
           Header: "",
           accessor: "Actions",
@@ -238,15 +252,38 @@ const handleAssignManager = (id)=>{
               {
                 <div className="table-data">
                   <div className="d-flex align-items-center justify-content-center table-icon">
+                    {/* <Link class="edit-icon" >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.65439 2.33945L0.95064 10.0495C0.95064 10.0495 0.880697 10.1395 0.870705 10.1895L0.0114021 13.6195C-0.0185736 13.7195 0.0114021 13.8295 0.0913372 13.9095C0.151289 13.9695 0.221232 13.9995 0.301167 13.9995C0.321151 13.9995 0.351126 13.9995 0.37111 13.9995L3.79833 13.1495C3.84829 13.1395 3.89825 13.1095 3.93822 13.0695L11.642 5.35945L8.6344 2.34945L8.65439 2.33945Z"
+                          fill="#999999"
+                        ></path>
+                        <path
+                          d="M13.5703 1.28945L12.711 0.429453C12.1415 -0.140547 11.1423 -0.140547 10.5628 0.429453L9.51364 1.47945L12.5112 4.47945L13.5604 3.42945C13.8501 3.13945 14 2.75945 14 2.35945C14 1.95945 13.8401 1.56945 13.5604 1.28945H13.5703Z"
+                          fill="#999999"
+                        ></path>
+                      </svg>
+                    </Link> */}
                     <Link
                       onClick={() => {
-
-                        removeProjects(row.original.id)
-
+                        removeProjects(row.original.id);
                       }}
                     >
                       <img src={TableTrash} alt="Delete" />
                     </Link>
+                    {/* <Link
+                      onClick={() => {
+                        removeProjects(row.original.id);
+                      }}
+                    >
+                      <img src={TableTrash} alt="Delete" />
+                    </Link> */}
                   </div>
                 </div>
               }
@@ -262,63 +299,56 @@ const handleAssignManager = (id)=>{
       return visibleColumns;
     });
   };
-  const onSubmitSearch = (formData) => {
-
-  }
-  const resetSearch = () => {
-
-  }
+  const onSubmitSearch = (formData) => {};
+  const resetSearch = () => {};
   const handleCustomSearch = (event) => {
     if (isShow === true) {
       setIsShow(false);
     } else {
-
       setIsShow(true);
     }
   };
   const fetchTasks = async () => {
-    setisLoading(true)
+    setisLoading(true);
     try {
-      const res = await getTasksByProjectId(id,authSelector?.access_token);
-      console.log('check check', res);
-     
-        setProjects(res)
-        settotalRecords(res?.length ? res?.length : 0)
-        setisLoading(false)
-      
-    //   if (res?.length > 0) {
-    //     console.log('task', res?.task);
-        // setProjects(res?.task)
-        // settotalRecords(res?.task?.length)
-        // setisLoading(false)
-    //   }
-    //   else {
-        // setProjects([])
-        // settotalRecords(0)
-        // setisLoading(false)
-    //   }
+      const res = await getTasksByProjectId(id, authSelector?.access_token);
+      console.log("check check", res);
+
+      setProjects(res);
+      settotalRecords(res?.length ? res?.length : 0);
+      setisLoading(false);
+
+      //   if (res?.length > 0) {
+      //     console.log('task', res?.task);
+      // setProjects(res?.task)
+      // settotalRecords(res?.task?.length)
+      // setisLoading(false)
+      //   }
+      //   else {
+      // setProjects([])
+      // settotalRecords(0)
+      // setisLoading(false)
+      //   }
     } catch (error) {
-      console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
+      console.error("Error creating user:", error?.message); // Handle error (e.g., show an error message)
+    } finally {
+      setisLoading(false);
     }
-    finally {
-      setisLoading(false)
-    }
-  }
+  };
   const removeProjects = async (id) => {
     try {
-      const res = await deleteProject(id,authSelector?.access_token);
-      console.log('User created successfully:', res);
+      const res = await deleteProject(id, authSelector?.access_token);
+      console.log("User created successfully:", res);
 
       setTimeout(() => {
-        fetchTasks()
-
+        fetchTasks();
       }, 1000);
     } catch (error) {
-      console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
+      console.error("Error creating user:", error?.message); // Handle error (e.g., show an error message)
     }
-  }
+  };
   useEffect(() => {
-    fetchTasks()
+    fetchTasks();
   }, []);
   return (
     <>
@@ -342,11 +372,20 @@ const handleAssignManager = (id)=>{
                             </svg>
                             show
                         </button> */}
+                        <Link
+              className="btn round-add-btn"
+              to={`/project/tasks/${id}`}
+              // onClick={() => handleOpenAdd("Add")}
+            >
+             
+              View Board
+            </Link>
+            {
+              authSelector.user.role !== "Employee" && (
 
-
-
-            <button className="btn round-add-btn"
-              onClick={() => handleOpenAdd('Add')}
+            <button
+              className="btn round-add-btn"
+              onClick={() => handleOpenAdd("Add")}
             >
               <svg
                 width="10"
@@ -359,13 +398,19 @@ const handleAssignManager = (id)=>{
               </svg>
               Create Task
             </button>
+              ) 
+            }
           </div>
         </div>
         {isShow ? (
-          <div className={`filter-search-wrapper ${isShow ? "active-filter" : ""}`}>
-            <form onSubmit={handleSubmit(onSubmitSearch)} style={{ width: '98%', margin: '0 8px' }}>
+          <div
+            className={`filter-search-wrapper ${isShow ? "active-filter" : ""}`}
+          >
+            <form
+              onSubmit={handleSubmit(onSubmitSearch)}
+              style={{ width: "98%", margin: "0 8px" }}
+            >
               <Grid container spacing={2} alignItems="center">
-
                 {/* State Field */}
                 <Grid item xs={12} sm={3}>
                   <Controller
@@ -373,13 +418,13 @@ const handleAssignManager = (id)=>{
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
-                      <FormControl fullWidth error={!!errors.state} size="small">
+                      <FormControl
+                        fullWidth
+                        error={!!errors.state}
+                        size="small"
+                      >
                         <InputLabel>State</InputLabel>
-                        <Select
-                          {...field}
-                          label="State"
-                          sx={{ height: 40 }}
-                        >
+                        <Select {...field} label="State" sx={{ height: 40 }}>
                           {/* Uncomment and add options */}
                           {/* {state.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -399,13 +444,13 @@ const handleAssignManager = (id)=>{
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
-                      <FormControl fullWidth error={!!errors.status} size="small">
+                      <FormControl
+                        fullWidth
+                        error={!!errors.status}
+                        size="small"
+                      >
                         <InputLabel>Status</InputLabel>
-                        <Select
-                          {...field}
-                          label="Status"
-                          sx={{ height: 40 }}
-                        >
+                        <Select {...field} label="Status" sx={{ height: 40 }}>
                           {/* Uncomment and add options */}
                           {/* {SHOW_FILTER_STATUS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -423,18 +468,28 @@ const handleAssignManager = (id)=>{
 
                 {/* Search Button */}
                 <Grid item>
-                  <Button type="submit" variant="contained" color="primary" sx={{ height: 40, width: 'fit-content' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ height: 40, width: "fit-content" }}
+                  >
                     Search
                   </Button>
                 </Grid>
 
                 {/* Reset Button */}
                 <Grid item>
-                  <Button type="reset" variant="outlined" color="secondary" sx={{ height: 40, width: 'fit-content' }} onClick={resetSearch}>
+                  <Button
+                    type="reset"
+                    variant="outlined"
+                    color="secondary"
+                    sx={{ height: 40, width: "fit-content" }}
+                    onClick={resetSearch}
+                  >
                     Reset
                   </Button>
                 </Grid>
-
               </Grid>
             </form>
           </div>
@@ -451,7 +506,7 @@ const handleAssignManager = (id)=>{
           isLoading={isLoading}
           manual={true}
           icontype="clients"
-        // checkAll={checkAll}
+          // checkAll={checkAll}
         />
       </div>
 

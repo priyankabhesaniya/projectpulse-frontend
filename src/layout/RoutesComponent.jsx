@@ -9,6 +9,7 @@ import Manager from '../pages/Adminpage/Manager';
 import Employee from '../pages/Adminpage/Employee';
 import { useSelector } from 'react-redux';
 import ProjectTask from '../pages/Adminpage/ProjectTask';
+import AdminKanBan from '../pages/Adminpage/AdminKanBan';
 const RoutesComponent = () => {
   const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   console.log("🚀 ~ RoutesComponent ~ authSelector:", authSelector)
@@ -23,6 +24,7 @@ const RoutesComponent = () => {
               <Route path="/project" element={<ProjectList />} />
               <Route path="/manager" element={<Manager />} />
               <Route path="/employee" element={<Employee />} />
+              <Route path="/project/tasks/:id" element={<AdminKanBan />} />
               <Route path="/project/:id" element={<ProjectTask />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>
@@ -35,7 +37,10 @@ const RoutesComponent = () => {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/project" element={<ProjectListManager />} />
                   <Route path="/employee" element={<Employee />} />
+                  <Route path="/project/tasks/:id" element={<AdminKanBan />} />
+                  <Route path="/project/:id" element={<ProjectTask />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
+
                 </>
               )
         }
@@ -46,10 +51,13 @@ const RoutesComponent = () => {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/project" element={<ProjectListEmployee />} />
                   {/* <Route path="/employee" element={<Employee />} /> */}
+                  <Route path="/project/tasks/:id" element={<AdminKanBan />} />
+                  <Route path="/project/:id" element={<ProjectTask />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </>
               )
         }
+                  <Route path="/calender" element={<h1>Under Development</h1>} />
 
 
 

@@ -4,14 +4,26 @@ import { getProjects, getTasks, getNotifications } from '../../api/Dashboard'; /
 import NotificationList from './NotificationList'; // Your notification list component
 import { Card, CardContent, Typography, Button, Grid, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import AddProjectForm from '../../components/AddProjectForm';
+import { useSelector } from 'react-redux';
+import { getManagersPair } from '../../api/Manager';
+import { getEmployeePair } from '../../api/Employe';
 const Dashboard = () => {
+  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const [projects, setProjects] = useState([]);
+  const [employee, setEmployee] = useState([]);
+  const [manager, setManager] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false); // State to control modal visibility
+  
   useEffect(() => {
     const fetchData = async () => {
-      // const projectsData = await getProjects();
+      const projectsData = await getProjects(authSelector?.access_token);
+      setProjects(projectsData)
+      const managerData = await getManagersPair(authSelector?.access_token)
+      setManager(managerData)
+      const employeeData = await getEmployeePair(authSelector?.access_token)
+      setEmployee(employeeData)
       // const tasksData = await getTasks();
       // const notificationsData = await getNotifications();
 
@@ -46,24 +58,24 @@ const Dashboard = () => {
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Projects</Typography>
-              <Typography variant="h4">{projects.length}</Typography>
+              <Typography variant="h6">Total Projects</Typography>
+              <Typography variant="h4">{projects?.length ? projects?.length : 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Tasks</Typography>
-              <Typography variant="h4">{tasks.length}</Typography>
+              <Typography variant="h6">Total Managers</Typography>
+              <Typography variant="h4">{manager?.length ? manager?.length : 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Notifications</Typography>
-              <Typography variant="h4">{notifications.length}</Typography>
+              <Typography variant="h6">Total Employees</Typography>
+              <Typography variant="h4">{employee?.length ? employee?.length : 0}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -107,6 +119,14 @@ const Dashboard = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <AddProjectForm
+        open={open}
+        setOpen={setOpen}
+        mode={"Add"}
+        projectId={null}
+        // setProjectId={setProjectId}
+        // fetchProjects={fetchProjects}
+      />
     </div>
   );
 };

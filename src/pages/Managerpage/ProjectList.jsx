@@ -19,7 +19,7 @@ import {
 
 import EmployeeForm from '../../components/EmployeeForm';
 import { deleteProject, getAllProject } from '../../api/Project';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddProjectForm from '../../components/Manager/AddProjectForm';
 import CheckBadges from '../../components/status/CheckBadges';
 import CheckAll from '../../components/DataTable/CheckAll'
@@ -28,7 +28,9 @@ import EyeIcon from "../../asset/images/eye-icon.svg"
 import moment from 'moment/moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { CheckCircle } from '@mui/icons-material';
 const ProjectList = () => {
+  const navigate = useNavigate()
   const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const [showHeader, setShowHeader] = useState(false);
   const [filter, setFilter] = useState(FILTER)
@@ -206,12 +208,14 @@ const handleAssignManager = (id)=>{
       {
         Header: "Tasks",
         accessor: "task",
-        className: "name-field",
+        className: "text-center name-field cursor-pointer",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <>
-
-          </>
+          <div className='table-data cursor-pointer'>
+            <CheckCircle color="primary" onClick={()=>{
+              navigate(`/project/${row?.original?.id}`)
+            }} sx={{cursor:'pointer'}}/>
+          </div>
         ),
       },
 

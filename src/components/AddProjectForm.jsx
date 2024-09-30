@@ -46,8 +46,8 @@ const AddProjectForm = ({
   mode,
   setOpen,
   projectId,
-  setProjectId,
-  fetchProjects,
+  setProjectId=()=>{},
+  fetchProjects=()=>{},
 }) => {
   const authSelector = useSelector(
     (state) => state.projectpulse.authUserReducer

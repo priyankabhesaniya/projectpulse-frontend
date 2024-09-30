@@ -1,11 +1,13 @@
 import axios from 'axios';
+import { headers } from '../pages/admin-const/constants';
 
 const API_URL = 'http://localhost:5000'; // Update this to your JSON server's URL
 
 // Function to get all projects
-export const getProjects = async () => {
+export const getProjects = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/projects`);
+    const response = await axios.get(`/projects`,headers(token));
+    console.log("🚀 ~ getProjects ~ response:", response)
     return response.data; // Return the list of projects
   } catch (error) {
     console.error('Error fetching projects:', error);

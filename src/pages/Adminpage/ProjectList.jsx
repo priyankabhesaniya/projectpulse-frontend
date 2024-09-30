@@ -39,8 +39,8 @@ const ProjectList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isShow, setIsShow] = useState(false)
   const [open, setOpen] = useState(false);
-  const [projectId, setProjectId] = useState(null)
   const [mode, setMode] = useState('Add'); // 'add' for adding a new projects
+  const [projectId, setProjectId] = useState(null)
   const [initialValues, setInitialValues] = useState({});
   const [projects, setProjects] = useState([])
   const [totalRecords, settotalRecords] = useState(0)
@@ -208,14 +208,14 @@ const handleAssignManager = (id)=>{
       {
         Header: "Tasks",
         accessor: "task",
-        className: "name-field",
+        className: "text-center name-field cursor-pointer",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <>
+          <div className='table-data cursor-pointer'>
             <CheckCircle color="primary" onClick={()=>{
               navigate(`/project/${row?.original?.id}`)
-            }}/>
-          </>
+            }} sx={{cursor:'pointer'}}/>
+          </div>
         ),
       },
 
