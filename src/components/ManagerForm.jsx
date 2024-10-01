@@ -68,11 +68,15 @@ const watching = watch()
          console.log('User created successfully:', res); 
          if(res?.id){
              onClose()
-             fetchManager()
          }
      
      } catch (error) {
          console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+     }
+     finally{
+      setTimeout(() => {
+        fetchManager()
+      }, 400);
      }
    }
    else if(mode == "Edit"){
@@ -91,12 +95,17 @@ const watching = watch()
       console.log('User created successfully:', res); 
       if(res?.id){
           onClose()
-          fetchManager()
+          // fetchManager()
       }
   
   } catch (error) {
-      console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
+      console.error('Error creating user:', error.message); 
   }
+  finally{
+    setTimeout(() => {
+      fetchManager()
+    }, 400);
+   }
    }
 };
   const onClose = ()=>{

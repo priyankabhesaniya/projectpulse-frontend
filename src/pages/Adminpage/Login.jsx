@@ -147,7 +147,7 @@ const Login = () => {
               Login
             </Button>
           </Grid>
-          <p>Don't have account? <Link to="/signup">SignUp here</Link></p>
+          {/* <p>Don't have account? <Link to="/signup">SignUp here</Link></p> */}
         </Grid>
       </form>
     </Box>

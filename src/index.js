@@ -49,11 +49,12 @@ axios.interceptors.response.use(
   error => {
     // Handle the error globally
     console.log("🚀 ~ error:", error.response.status)
+    toast.error(error?.response?.data?.error)
     console.log("🚀 ~ error:", error?.response?.data?.error)
     console.log("🚀 ~ error:", error.response)
     if (error?.response?.status == 403 && error?.response?.data?.error == 'Invalid or expired token') {
-      // localStorage.clear()
-      // window.location.href = '/login'
+      localStorage.clear()
+      window.location.href = '/login'
       toast.error('Session expired')
       return
     }

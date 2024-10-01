@@ -119,7 +119,9 @@ const AddProjectForm = ({
   }, []);
   const handleFormSubmit = async (data) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
+   
     if (mode == "Add") {
+      console.log('in add');
       try {
         const projectData = {
           about: data?.about,
@@ -142,40 +144,51 @@ const AddProjectForm = ({
         console.log("User created successfully:", res);
         if (res?.id) {
           onClose();
-          fetchProjects();
+       
         }
       } catch (error) {
         console.error("Error creating user:", error.message); // Handle error (e.g., show an error message)
       }
+      finally{
+        setTimeout(() => {
+          fetchProjects();
+        }, 400);
+       }
     } else if (mode == "Edit") {
+      console.log('in Edit');
+      const projectData = {
+        about: data?.about,
+        name: data?.name,
+        deadline_date: data?.deadline_date,
+        start_date: data?.start_date,
+        status: data?.status,
+        manager: managers?.find((item) => item.id === data.manager),
+        employe: employees?.filter((item) =>
+          data?.employe?.includes(item.id)
+        ),
+      };
       try {
-        const projectData = {
-          ...data,
-          // created_by: {
-          //   name: authSelector?.user?.name,
-          //   id: authSelector?.user?.id,
-          // },
-          manager: managers?.find((item) => item.id === data.manager),
-          employe: employees?.filter((item) =>
-            data?.employe?.includes(item.id)
-          ),
-        };
-
-        const res = await updateProject(projectId, projectData,authSelector?.access_token);
+       const res = await updateProject(projectId, projectData,authSelector?.access_token);
         console.log("User created successfully:", res);
         if (res?.id) {
           onClose();
           fetchProjects();
         }
       } catch (error) {
-        console.error("Error creating user:", error.message); // Handle error (e.g., show an error message)
+        console.error("Error creating user:", error.message); 
       }
+      finally{
+        setTimeout(() => {
+          fetchProjects();
+        }, 400);
+       }
     }
   };
 
   const onClose = () => {
-    reset();
+    // reset();
     setOpen(false);
+    setProjectId(null)
   };
   const projectData = async () => {
     try {
@@ -201,10 +214,13 @@ const AddProjectForm = ({
     }
   };
   useEffect(() => {
-    if (projectId > 0) {
+    if (projectId && mode) {
       projectData();
     }
-  }, [projectId]);
+    else{
+      reset()
+    }
+  }, [projectId,mode]);
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle> {mode === "Add" ? "Add Project" : "Edit Project"}</DialogTitle>
@@ -346,26 +362,7 @@ const AddProjectForm = ({
               />
             </Grid>
 
-            {/* <Grid item xs={12} sm={6}>
-               <Controller
-                name="projectType"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.role}>
-                    <InputLabel>Project Type</InputLabel>
-                    <Select {...field} label="Project Type">
-                      {projectTypes.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.projectType && <p className='error-msg'>{errors.projectType.message}</p>}
-                  </FormControl>
-                )}
-              />
-            </Grid> */}
+         
           </Grid>
         </form>
       </DialogContent>

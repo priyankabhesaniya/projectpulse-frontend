@@ -4,7 +4,7 @@ import { initialState, FILTER, PAGE_LENGTH } from '../admin-const/constants';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-
+import PreviewIcon from '@mui/icons-material/Preview';
 import {
   TextField,
   Button,
@@ -208,9 +208,9 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <div className='table-data cursor-pointer'>
-            <CheckCircle color="primary" onClick={()=>{
+            <PreviewIcon color="contained" onClick={()=>{
               navigate(`/project/${row?.original?.id}`)
-            }} sx={{cursor:'pointer'}}/>
+            }} sx={{cursor:'pointer'}} variant='contained'/>
           </div>
         ),
       },

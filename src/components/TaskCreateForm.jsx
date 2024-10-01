@@ -24,9 +24,9 @@ import moment from 'moment';
 const TaskCreateForm = ({ open, mode, setOpen, taskId, setTaskId, fetchTasks }) => {
   console.log("🚀 ~ TaskForm ~ mode:", mode);
 const {id} = useParams()
-  // Task validation schema
+ 
   const [taskEmployee,setTaskEmployee] = useState([])
-  // Function to handle opening the modal for adding an projects
+
   const projectData = async () => {
     try {
       const res = await getOneProject(id,authSelector?.access_token);
@@ -91,13 +91,18 @@ const {id} = useParams()
         if(res){
 
             onClose();
-            fetchTasks();
+          
         }
       
         
       } catch (error) {
         console.error('Error creating task:', error.message);
       }
+      finally{
+        setTimeout(() => {
+          fetchTasks()
+        }, 400);
+       }
     } else if (mode === 'Edit') {
       try {
         const taskData = {
@@ -118,11 +123,14 @@ const {id} = useParams()
       } catch (error) {
         console.error('Error updating task:', error.message);
       }
+      finally{
+        setTimeout(() => {
+          fetchTasks()
+        }, 400);
+       }
     }
     onClose()
-   setTimeout(() => {
-    fetchTasks();
-   }, 400);
+  
   };
 
   const onClose = () => {
@@ -220,20 +228,6 @@ const {id} = useParams()
               />
             </Grid>
           
-            {/* <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Status"
-                select
-                {...register('status')}
-                error={!!errors.status}
-                helperText={errors.status ? errors.status.message : ''}
-              >
-                <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="In Progress">In Progress</MenuItem>
-                <MenuItem value="Completed">Completed</MenuItem>
-              </TextField>
-            </Grid> */}
             <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth

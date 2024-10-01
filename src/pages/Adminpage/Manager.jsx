@@ -23,6 +23,7 @@ import { DeleteBtn } from '../../components/status/Badges';
 import CheckAll from '../../components/DataTable/CheckAll'
 import TableTrash from "../../asset/images/table-trash.svg"
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 const Manager = ({ projects }) => {
     const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
     const [showHeader, setShowHeader] = useState(false);
@@ -50,7 +51,7 @@ const Manager = ({ projects }) => {
             {
                 Header: "Code",
                 accessor: "id_f",
-                className: "name-field",
+                className: "text-center name-field",
                 disableSortBy: true,
                 Cell: ({ row }) => (
                     <>
@@ -200,12 +201,17 @@ const Manager = ({ projects }) => {
         try {
             const res = await deleteManager(id,authSelector?.access_token);
             console.log('User created successfully:', res);
-
-            fetchManager()
+            toast.success('Manager deleted successfully')
+            // fetchManager()
 
         } catch (error) {
             console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
         }
+        finally{
+            setTimeout(() => {
+              fetchManager()
+            }, 400);
+           }
     }
     useEffect(() => {
         fetchManager()

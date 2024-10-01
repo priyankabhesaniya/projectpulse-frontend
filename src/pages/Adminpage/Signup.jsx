@@ -14,17 +14,20 @@ import {
     Typography
 } from '@mui/material';
 import { createUser } from '../../api/Signup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 // Yup validation schema
 const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required').min(3, 'Name must be at least 3 characters'),
     email: yup.string().email('Invalid email').required('Email is required'),
+    phone: yup.string().required('Phone is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
     role: yup.string().required('Role is required')
 });
 
 const Signup = () => {
+    const navigate = useNavigate()
     // React Hook Form setup
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(validationSchema)
@@ -41,13 +44,19 @@ const Signup = () => {
                 email: data.email,
                 password: data.password,
                 role: data.role,
+                phone:data.phone
             };
 
             const response = await createUser(userData);
+            if(response){
+                navigate('/login')
+                toast.success('User created successfully')
+            }
             console.log('User created successfully:', response); // Handle successful response (e.g., show a success message)
         } catch (error) {
             console.error('Error creating user:', error.message); // Handle error (e.g., show an error message)
         }
+
     };
 
 
@@ -100,7 +109,22 @@ const Signup = () => {
                             )}
                         />
                     </Grid>
-
+                    <Grid item xs={12}>
+                        <Controller
+                            name="phone"
+                            control={control}
+                            defaultValue=""
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="Phone"
+                                    fullWidth
+                                    error={!!errors.name}
+                                    helperText={errors.phone ? errors.phone.message : ''}
+                                />
+                            )}
+                        />
+                    </Grid>
                     {/* Password Field */}
                     <Grid item xs={12}>
                         <Controller

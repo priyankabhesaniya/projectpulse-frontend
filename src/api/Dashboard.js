@@ -8,7 +8,7 @@ export const getProjects = async (token) => {
   try {
     const response = await axios.get(`/projects`,headers(token));
     console.log("🚀 ~ getProjects ~ response:", response)
-    return response.data; // Return the list of projects
+    return response?.data; // Return the list of projects
   } catch (error) {
     console.error('Error fetching projects:', error);
     throw error; // Propagate the error
@@ -19,7 +19,7 @@ export const getProjects = async (token) => {
 export const getTasks = async () => {
   try {
     const response = await axios.get(`${API_URL}/tasks`);
-    return response.data; // Return the list of tasks
+    return response?.data; // Return the list of tasks
   } catch (error) {
     console.error('Error fetching tasks:', error);
     throw error; // Propagate the error
@@ -30,7 +30,7 @@ export const getTasks = async () => {
 export const getNotifications = async () => {
   try {
     const response = await axios.get(`${API_URL}/notifications`);
-    return response.data; // Return the list of notifications
+    return response?.data; // Return the list of notifications
   } catch (error) {
     console.error('Error fetching notifications:', error);
     throw error; // Propagate the error
@@ -41,7 +41,7 @@ export const getNotifications = async () => {
 export const getUserStats = async () => {
   try {
     const response = await axios.get(`${API_URL}/userStats`);
-    return response.data; // Return the user statistics
+    return response?.data; // Return the user statistics
   } catch (error) {
     console.error('Error fetching user stats:', error);
     throw error; // Propagate the error

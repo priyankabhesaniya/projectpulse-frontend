@@ -7,7 +7,7 @@ import RoutesComponent from './RoutesComponent'; // Assuming this is your routin
 
 const ProtectedNode = ({ authSelector }) => {
   return (
-    <Grid container>
+    <Grid container sx={{pb:0}}>
     
 
       {/* Fixed Sidebar */}
@@ -16,7 +16,7 @@ const ProtectedNode = ({ authSelector }) => {
       </Grid>
 
       {/* Main Content Area */}
-      <Grid item xs={10} style={{ marginLeft: 240, paddingTop: 64, padding: 20,marginTop:100 }}>
+      <Grid item xs={10} style={{ marginLeft: 240, paddingTop: 64, padding: 20,marginTop:100,paddingBottom:0 }}>
         <RoutesComponent authSelector={authSelector} />
       </Grid>
     </Grid>

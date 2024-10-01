@@ -20,6 +20,7 @@ import {
 import EmployeeForm from "../../components/EmployeeForm";
 import {
   deleteProject,
+  deleteTask,
   getAllProject,
   getOneProject,
   getTasksByProjectId,
@@ -34,6 +35,7 @@ import moment from "moment/moment";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import TaskCreateForm from "../../components/TaskCreateForm";
+import { toast } from "react-toastify";
 
 const ProjectTask = () => {
   const { id } = useParams();
@@ -270,6 +272,10 @@ const ProjectTask = () => {
                         ></path>
                       </svg>
                     </Link> */}
+                    {
+                      authSelector?.user?.role !== 'Employee' &&
+                      (
+
                     <Link
                       onClick={() => {
                         removeProjects(row.original.id);
@@ -277,6 +283,8 @@ const ProjectTask = () => {
                     >
                       <img src={TableTrash} alt="Delete" />
                     </Link>
+                      )
+                    }
                     {/* <Link
                       onClick={() => {
                         removeProjects(row.original.id);
@@ -335,11 +343,12 @@ const ProjectTask = () => {
       setisLoading(false);
     }
   };
-  const removeProjects = async (id) => {
+  const removeProjects = async (taskId) => {
+    console.log(taskId,'taskId');
     try {
-      const res = await deleteProject(id, authSelector?.access_token);
-      console.log("User created successfully:", res);
-
+      const res = await deleteTask(id,taskId, authSelector?.access_token);
+      
+      toast.success('Task deleted successfully')
       setTimeout(() => {
         fetchTasks();
       }, 1000);
@@ -356,10 +365,11 @@ const ProjectTask = () => {
         <div className="table-header filter-action nowrap">
           <h5>Tasks</h5>
           <div className="table-buttons-block">
-            {/* <button
+          {/* <button
                             className={`btn table-action-btn ${isShow ? "active" : ""}`}
                             id="filter-btn"
-                            onClick={handleCustomSearch}
+                            onClick={()=>navigate(`/project/progress/${id}`)}
+                            style={{background:'#3bb537'}}
                         >
                             <svg
                                 width="10"
@@ -370,10 +380,20 @@ const ProjectTask = () => {
                             >
                                 <path d="M3.79733 4.72642C3.89831 4.83633 3.9589 4.98622 3.9589 5.1461V9.69265C3.9589 9.96245 4.29215 10.1023 4.49411 9.91249L5.77659 8.46359C5.94826 8.26374 6.03914 8.16381 6.03914 7.95397V5.1461C6.03914 4.99621 6.09973 4.84633 6.20071 4.72642L9.87648 0.779409C10.1491 0.479636 9.93707 0 9.53313 0H0.464912C0.0609818 0 -0.151081 0.479636 0.121571 0.779409L3.79733 4.72642Z" />
                             </svg>
-                            show
-                        </button> */}
+                            View Progress
+                        </button>  */}
                         <Link
-              className="btn round-add-btn"
+              className="btn round-add-btn btn-success"
+              style={{background:'#3bb537'}}
+              to={`/project/progress/${id}`}
+              // onClick={() => handleOpenAdd("Add")}
+            >
+             
+             View Progress
+            </Link>
+                        <Link
+              className="btn round-add-btn btn-success"
+              style={{background:'#a32499'}}
               to={`/project/tasks/${id}`}
               // onClick={() => handleOpenAdd("Add")}
             >
@@ -502,7 +522,8 @@ const ProjectTask = () => {
           totalRecords={totalRecords}
           tableHooks={tableHooks}
           setSelectedRows={setSelectedRows}
-          defaultPageLength={PAGE_LENGTH}
+          defaultPageLength={false}
+          searchField={false}
           isLoading={isLoading}
           manual={true}
           icontype="clients"

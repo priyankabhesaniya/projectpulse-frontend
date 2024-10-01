@@ -11,8 +11,10 @@ export const createProject = async (projectData,token) => {
   }
 };
 export const updateProject = async (id, projectData,token) => {
+  console.log("🚀 ~ updateProject ~ projectData:", projectData)
   try {
     const response = await axios.patch("projects/" + id, projectData, headers(token)); // Use the Axios instance
+    console.log("🚀 ~ updateProject ~ response:", response)
     return response.data; // Return response data if needed
   } catch (error) {
     throw new Error(error.response?.data?.message || "Error creating user");
@@ -162,5 +164,23 @@ export const getOneTask = async (projectId, taskId,token) => {
   } catch (error) {
     console.error('Error fetching task:', error.message);
     throw error; // Rethrow the error for further handling
+  }
+};
+
+
+export const deleteTask = async (id,taksId,token) => {
+  try {
+    const response = await axios.get("projects/" + id, headers(token)); // Use the Axios instance
+    console.log("🚀 ~ deleteTask ~ response:", response)
+    const task = response?.data?.task
+    const updatedTask = task?.filter((item)=>item.id !== taksId)
+    console.log("🚀 ~ deleteTask ~ updatedTask:", updatedTask)
+    const project = {...response?.data,task:updatedTask}
+   const res = await updateProject(id,project,token)
+    console.log("🚀 ~ deleteTask ~ res:", res)
+
+    return response.data; // Return response data if needed
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Error creating user");
   }
 };

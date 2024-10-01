@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   Box,
   Typography,
+  LinearProgress,
   Card,
   CardContent,
   TextField,
@@ -61,7 +62,6 @@ const KanBanBoard = ({
         if (newColumns[task.status]) {
           newColumns[task.status].taskIds.push(task.id);
         } else {
-          // If the status doesn't exist, create a new column
           newColumns[task.status] = {
             id: task.status,
             title: task.status,
@@ -132,7 +132,6 @@ const KanBanBoard = ({
         [newFinish.id]: newFinish,
       });
 
-      // Update task status
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === parseInt(draggableId)
@@ -169,16 +168,33 @@ const KanBanBoard = ({
       setFlag(false);
     }
   };
-
+  const calculateProgress = (columns) => {
+    const totalTasks = Object.values(columns).reduce(
+      (total, column) => total + column.taskIds.length,
+      0
+    );
+    const completedTasks = columns['Completed'] ? columns['Completed'].taskIds.length : 0;
+  
+  
+    return totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+  };
+  
   useEffect(() => {
     if (flag) {
       addNewColumn();
     }
   }, [flag]);
-
+  const progress = calculateProgress(columns);
   return (
     <>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 0 }}>
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="h6">Project Progress</Typography>
+        <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: 1 }} />
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          {progress}% completed
+        </Typography>
+      </Box>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable
             droppableId="all-columns"
@@ -327,16 +343,6 @@ const KanBanBoard = ({
                                               </Typography>
                                             </CardContent>
 
-                                            {/* <CardContent sx={{ p: 2 }}>
-                                            <Typography variant="subtitle1">{task.title}</Typography>
-                                            <Typography variant="body2">{task.description}</Typography>
-                                            <Typography variant="caption" color="text.secondary">
-                                              Assigned to: {task.assigned_to.name}
-                                            </Typography>
-                                            <Typography variant="caption" color="text.secondary" display="block">
-                                              Deadline: {task.deadline_date}
-                                            </Typography>
-                                          </CardContent> */}
                                           </Card>
                                         )}
                                       </Draggable>

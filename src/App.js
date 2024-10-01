@@ -31,8 +31,11 @@ import Layout from './layout/Layout'; // Adjust the import according to your fil
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NotificationSystem from './components/Notification';
+import { useSelector } from 'react-redux';
 
 const App = () => {
+  const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   return (
     <>
    <Layout/>

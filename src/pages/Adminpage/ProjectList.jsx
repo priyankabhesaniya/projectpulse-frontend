@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import DataTable from '../../components/DataTable';
-import { initialState, FILTER, PAGE_LENGTH } from '../admin-const/constants';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import {
   TextField,
   Button,
@@ -21,6 +18,9 @@ import EmployeeForm from '../../components/EmployeeForm';
 import { deleteProject, getAllProject } from '../../api/Project';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import AddProjectForm from '../../components/AddProjectForm';
+import DataTable from '../../components/DataTable';
+import PreviewIcon from '@mui/icons-material/Preview';
+import { initialState, FILTER, PAGE_LENGTH, statusOptions } from '../admin-const/constants';
 import CheckBadges from '../../components/status/CheckBadges';
 import CheckAll from '../../components/DataTable/CheckAll'
 import TableTrash from "../../asset/images/table-trash.svg"
@@ -29,28 +29,29 @@ import moment from 'moment/moment';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { CheckCircle } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 const ProjectList = () => {
   const navigate = useNavigate()
   const authSelector = useSelector((state) => state.projectpulse.authUserReducer)
   const [showHeader, setShowHeader] = useState(false);
   const [filter, setFilter] = useState(FILTER)
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [totalRecords, settotalRecords] = useState(0)
   console.log("🚀 ~ ProjectList ~ filter:", filter)
   const [isLoading, setisLoading] = useState(false)
-  const [selectedRows, setSelectedRows] = useState([]);
   const [isShow, setIsShow] = useState(false)
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState('Add'); // 'add' for adding a new projects
   const [projectId, setProjectId] = useState(null)
   const [initialValues, setInitialValues] = useState({});
   const [projects, setProjects] = useState([])
-  const [totalRecords, settotalRecords] = useState(0)
   // Function to handle opening the modal for adding an projects
   const handleOpenAdd = (mode) => {
     setMode(mode);
     setOpen(true);
   };
 
-  const { handleSubmit, control, formState: { errors } } = useForm({
+  const { handleSubmit,reset, control, formState: { errors } } = useForm({
 
   });
 const handleAssignManager = (id)=>{
@@ -212,9 +213,9 @@ const handleAssignManager = (id)=>{
         disableSortBy: true,
         Cell: ({ row }) => (
           <div className='table-data cursor-pointer'>
-            <CheckCircle color="primary" onClick={()=>{
+            <PreviewIcon color="contained" onClick={()=>{
               navigate(`/project/${row?.original?.id}`)
-            }} sx={{cursor:'pointer'}}/>
+            }} sx={{cursor:'pointer'}} variant='contained'/>
           </div>
         ),
       },
@@ -277,10 +278,14 @@ const handleAssignManager = (id)=>{
     });
   };
   const onSubmitSearch = (formData) => {
-
+  console.log("🚀 ~ onSubmitSearch ~ formData:", formData)
+if(formData?.status){
+  setFilter({...filter,status:formData?.status})
+}
   }
   const resetSearch = () => {
-
+    reset()
+setFilter(FILTER)
   }
   const handleCustomSearch = (event) => {
     if (isShow === true) {
@@ -316,14 +321,16 @@ const handleAssignManager = (id)=>{
     try {
       const res = await deleteProject(id,authSelector?.access_token);
       console.log('User created successfully:', res);
-
-      setTimeout(() => {
-        fetchProjects()
-
-      }, 1000);
+      toast.success('Project deleted successfully')
+    
     } catch (error) {
       console.error('Error creating user:', error?.message); // Handle error (e.g., show an error message)
     }
+    finally{
+      setTimeout(() => {
+        fetchProjects();
+      }, 400);
+     }
   }
   useEffect(() => {
     fetchProjects()
@@ -334,7 +341,8 @@ const handleAssignManager = (id)=>{
         <div className="table-header filter-action nowrap">
           <h5>Projects</h5>
           <div className="table-buttons-block">
-            {/* <button
+         
+          <button
                             className={`btn table-action-btn ${isShow ? "active" : ""}`}
                             id="filter-btn"
                             onClick={handleCustomSearch}
@@ -349,9 +357,7 @@ const handleAssignManager = (id)=>{
                                 <path d="M3.79733 4.72642C3.89831 4.83633 3.9589 4.98622 3.9589 5.1461V9.69265C3.9589 9.96245 4.29215 10.1023 4.49411 9.91249L5.77659 8.46359C5.94826 8.26374 6.03914 8.16381 6.03914 7.95397V5.1461C6.03914 4.99621 6.09973 4.84633 6.20071 4.72642L9.87648 0.779409C10.1491 0.479636 9.93707 0 9.53313 0H0.464912C0.0609818 0 -0.151081 0.479636 0.121571 0.779409L3.79733 4.72642Z" />
                             </svg>
                             show
-                        </button> */}
-
-
+                        </button>
 
             <button className="btn round-add-btn"
               onClick={() => handleOpenAdd('Add')}
@@ -375,7 +381,7 @@ const handleAssignManager = (id)=>{
               <Grid container spacing={2} alignItems="center">
 
                 {/* State Field */}
-                <Grid item xs={12} sm={3}>
+                {/* <Grid item xs={12} sm={3}>
                   <Controller
                     name="state"
                     control={control}
@@ -388,20 +394,36 @@ const handleAssignManager = (id)=>{
                           label="State"
                           sx={{ height: 40 }}
                         >
-                          {/* Uncomment and add options */}
-                          {/* {state.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))} */}
+                      
                         </Select>
                       </FormControl>
                     )}
                   />
-                </Grid>
-
+                </Grid> */}
+ <Grid item xs={12} sm={3}>
+              <Controller
+                name="status"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.role}>
+                    <InputLabel>Status</InputLabel>
+                    <Select {...field} label="Status" sx={{ height: 40 }}>
+                      {statusOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.status && (
+                      <p className="error-msg">{errors.status.message}</p>
+                    )}
+                  </FormControl>
+                )}
+              />
+            </Grid>
                 {/* Status Field */}
-                <Grid item xs={12} sm={3}>
+                {/* <Grid item xs={12} sm={3}>
                   <Controller
                     name="status"
                     control={control}
@@ -414,12 +436,7 @@ const handleAssignManager = (id)=>{
                           label="Status"
                           sx={{ height: 40 }}
                         >
-                          {/* Uncomment and add options */}
-                          {/* {SHOW_FILTER_STATUS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))} */}
+                         
                         </Select>
                         {errors?.status && (
                           <p className="error-msg">{errors?.status?.message}</p>
@@ -427,7 +444,7 @@ const handleAssignManager = (id)=>{
                       </FormControl>
                     )}
                   />
-                </Grid>
+                </Grid> */}
 
                 {/* Search Button */}
                 <Grid item>
